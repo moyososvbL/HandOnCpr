@@ -1,0 +1,125 @@
+- !<AssetImportMetadata/47f42896-13e0-4df9-8e34-9705528e18ae>
+  ImportedAssetIds:
+    26ba073d67b9d0dd: !<reference> 44147e6f-a30a-4099-9e71-664bf58b4596
+    88ab437fd121cc69: !<reference> d8903cec-1763-4fb4-b33c-063b65d5ca0d
+    8c2c6f3cf8d060fd: !<reference> aa7c9420-ea33-4ae5-a432-5a898db51200
+    Meshes/Mesh 1: !<reference> c5746e99-37df-4307-8a94-ecd160c69e99
+    Scene: !<reference> 405475dd-a7c3-4a33-955b-55795ee6872e
+    d596665d1a4bffd1: !<reference> 06763e88-ce63-4edb-95a1-9ec6a9687147
+    ed3acca98b96b0a1: !<reference> b6d1b6ad-5b54-4060-99be-3590c9eb0f55
+  ImporterName: GltfImporter
+  PrimaryAsset: !<reference> 405475dd-a7c3-4a33-955b-55795ee6872e
+  PackageType: LegacyPackage
+  LegacyPackagePolicy: CanBeUnpackedTransparent
+  ExtraData:
+    {}
+  AssetDataMap:
+    Scene: !<own> c96b046f-6acc-4eb0-b50b-91ad513ed736
+  DependentFiles:
+    []
+  ImporterSettings: !<GltfImporterSettings>
+    UseLegacyImporter: false
+    WithMaterials: true
+    NamingConvention: ByCategorySanitizeV2
+    PersistentIdGenerationAlgorithm: DescriptorBasedV2
+    AnimationCurveOptimization: true
+    CustomAnimationSamplingRate: 30.000000
+    ImportVertexColor: true
+    ImportTangents: true
+    ImportMorphTargetAnimation: true
+    ConvertMetersToCentimeters: true
+    RegenerateTangents: false
+    OptimizeMesh: true
+  CompressionSettings: !<ComplexCompressionSettings>
+    Presets:
+      None Compression: !<FileCompressionSettings>
+        {}
+    ExtensionMappings:
+      mesh: None Compression
+    Overrides:
+      {}
+- !<RenderMeshVisual/06763e88-ce63-4edb-6a5e-613956978eb8>
+  PrefabRemaps:
+    []
+  Name: ""
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    []
+  Mesh: !<reference> c5746e99-37df-4307-8a94-ecd160c69e99
+  Skin: !<reference> 00000000-0000-0000-0000-000000000000
+  BlendShapesEnabled: true
+  BlendNormals: false
+  BlendShapes:
+    {}
+- !<SceneObject/44147e6f-a30a-4099-618e-99b40a74ba69>
+  PrefabRemaps:
+    []
+  Name: Manikin
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 100.000000, y: 100.000000, z: 100.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> d8903cec-1763-4fb4-4cc3-f9c49a2a35f2
+  Components:
+    []
+- !<SceneObject/aa7c9420-ea33-4ae5-5bcd-a576724aedff>
+  PrefabRemaps:
+    []
+  Name: Scene0
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> b6d1b6ad-5b54-4060-6641-ca6f3614f0aa
+  Components:
+    []
+- !<SceneObject/b6d1b6ad-5b54-4060-6641-ca6f3614f0aa>
+  PrefabRemaps:
+    []
+  Name: geometry_0
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 06763e88-ce63-4edb-6a5e-613956978eb8
+- !<ObjectPrefabAssetData/c96b046f-6acc-4eb0-b50b-91ad513ed736>
+  Prototype: !<ObjectOwner/c0aa59c8-a034-4335-966e-147d16d0c001>
+    PackagePath: ""
+    objects:
+      - !<own> 44147e6f-a30a-4099-618e-99b40a74ba69
+- !<SceneObject/d8903cec-1763-4fb4-4cc3-f9c49a2a35f2>
+  PrefabRemaps:
+    []
+  Name: Scenes
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> aa7c9420-ea33-4ae5-5bcd-a576724aedff
+  Components:
+    []

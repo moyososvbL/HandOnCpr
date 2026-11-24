@@ -1,0 +1,35 @@
+{
+  "step": "plan-assets",
+  "status": "ok",
+  "errors": [],
+  "deviations": [
+    "Signed out (is_authorized=false): AI-generated models, images, and RSG tokens are unavailable until sign-in; no generated images planned, no TTS.",
+    "Manikin is a code-authored primitive stand-in (head, neck, torso, arms) per brief, not an AI mesh; backend hint 'code-authored' (MeshBuilder/primitives).",
+    "Hands guide and heart use existing Assets/Textures/hands_white.png, hands_green.png, heart.png on unlit alpha-blended planes; no replacement assets generated.",
+    "No music: brief/notes specify only a 110 BPM beat click."
+  ],
+  "retries": 0,
+  "tier": "interactive",
+  "theme": {
+    "style": "realistic, clean, medical training, frosted glass UI",
+    "palette": "light neutral grey, bright white, soft green confirm, emergency red #F2392C accent",
+    "mood": "calm, clear, reassuring under stress"
+  },
+  "assets": [
+    { "type": "mesh", "name": "Manikin", "backend": "code-authored", "description": "adult CPR training manikin lying face-up on its back, built from simple rounded primitives: sphere head, short cylinder neck, broad capsule torso with flat chest, two capsule arms resting at its sides; uniform light neutral grey matte", "animate": "no", "rest": "flat_on_surface", "target_size_cm": { "x": 55, "y": 24, "z": 120 } },
+    { "type": "sfx", "name": "BeatClick", "description": "very short crisp dry metronome click, tight transient under 40 ms, one per beat at 110 BPM, clearly audible but not harsh" },
+    { "type": "sfx", "name": "ButtonPress", "description": "soft short UI confirm tap for pinching the step button" },
+    { "type": "sfx", "name": "HoldComplete", "description": "brief gentle rising two-tone confirm chime when the 1 second hands-in-place hold completes" },
+    { "type": "icon", "name": "warning", "description": "alert icon for the Check step tab" },
+    { "type": "icon", "name": "call", "description": "phone icon for the Call 112 step tab" },
+    { "type": "icon", "name": "back_hand", "description": "hand icon for Watch first / Place hands / Hold step tab" },
+    { "type": "icon", "name": "monitor_heart", "description": "heartbeat icon for Push / Swap step tab" },
+    { "type": "icon", "name": "check_circle", "description": "check icon for Help is here step tab" },
+    { "type": "ui", "name": "CPRCoachUI", "description": "Frosted-glass light translucent grey step window with vertical step tab bar on its left edge; light text for additive display; one card visible at a time; switches between head-follow and chest-anchored placement", "elements": [
+      { "element": "hud-panel", "name": "stepWindow", "description": "Frosted glass rounded window: small 60% white step label, large white semibold instruction, counter as the largest element, readable from 60-80 cm", "labels": ["Step 3 of 5", "Not responding? Not breathing normally?", "Call 112. Put the phone on speaker.", "Push down 5 cm", "Let the chest rise", "Match your hands to the guide. Arms straight. Shoulders over hands.", "Hold still", "Push hard, push fast.", "Swap with someone if you can", "Help is here", "9,999", "Time 88:88 · 9,999 compressions"], "container": "frame" },
+      { "element": "button", "name": "actionButton", "description": "Single large pinch button inside the window; red #F2392C on Check, hidden on Place hands and Hold; highlights on hover", "labels": ["Start CPR", "Called", "I'm ready", "Help arrived", "Finish"], "container": "frame" },
+      { "element": "progress-bar", "name": "holdProgress", "description": "Short horizontal progress bar filling over 1 s, visible only in Hold step, resets to empty on early release", "labels": [], "container": "frame" },
+      { "element": "tab-bar", "name": "stepTabBar", "description": "Vertical glass capsule on the left edge of the window with 5 round icon tabs (warning, call, back_hand, monitor_heart, check_circle); active = filled white circle with dark icon, finished = white icon, upcoming = 45% opacity; display-only", "labels": ["Check", "Call 112", "Hands", "Push", "Done"], "container": "capsule" }
+    ]}
+  ]
+}

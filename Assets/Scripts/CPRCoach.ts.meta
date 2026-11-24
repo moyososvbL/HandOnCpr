@@ -1,0 +1,74 @@
+- !<AssetImportMetadata/b1f690c9-a6e8-415d-a3d9-c6de6b976c5e>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 4cd1b57b-439b-4fb0-9afe-907f2ec0ed58
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 4cd1b57b-439b-4fb0-9afe-907f2ec0ed58
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 473ac8b1-8ca1-49fd-b919-968cb03cd7e8
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/473ac8b1-8ca1-49fd-b919-968cb03cd7e8>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  RunInEditor: false
+  ComponentUid: ad7d42d9-bd91-4f5a-83dc-06f4df730625
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    bpm: false
+    camera: false
+    clickAudio: false
+    counterText: false
+    guide: false
+    guideVisual: false
+    handRadius: false
+    instructionText: false
+    pressDepth: false
+    swapEvery: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - instructionText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      counterText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      guide: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      guideVisual: !<reference.RenderMeshVisual> 00000000-0000-0000-0000-000000000000
+      clickAudio: !<reference.AudioComponent> 00000000-0000-0000-0000-000000000000
+      camera: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      bpm: !<float> 110.000000
+      pressDepth: !<float> 4.000000
+      handRadius: !<float> 10.000000
+      swapEvery: !<float> 120.000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input Component.Text instructionText
+    - // @input Component.Text counterText
+    - // @input SceneObject guide
+    - // @input Component.RenderMeshVisual guideVisual
+    - // @input Component.AudioComponent clickAudio
+    - // @input SceneObject camera
+    - // @input float bpm = 110
+    - // @input float pressDepth = 4
+    - // @input float handRadius = 10
+    - // @input float swapEvery = 120

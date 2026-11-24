@@ -1,0 +1,19 @@
+{
+  "step": "proxy",
+  "status": "ok",
+  "errors": [],
+  "deviations": ["Manikin's real backend is code-authored (MeshBuilder). If the mesh step does not write a GLB to Assets/GeneratedMeshes/Manikin.glb, this proxy will not be replaced, and the skeleton/bootstrap must stop referencing it."],
+  "retries": 0,
+  "proxies": [
+    {
+      "name": "Manikin",
+      "path": "Assets/GeneratedMeshes/Manikin.glb",
+      "status": "ok",
+      "primitive": "box",
+      "target_size_cm": {"x": 55, "y": 24, "z": 120},
+      "aabb_cm": {"x": 55.0, "y": 24.0, "z": 120.0},
+      "grounded": true,
+      "replaced_by_step": "mesh"
+    }
+  ]
+}
