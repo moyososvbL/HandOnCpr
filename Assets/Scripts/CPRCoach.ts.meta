@@ -30,15 +30,28 @@
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
     bpm: false
+    buttonAudio: false
     camera: false
+    chestWindowScale: false
     clickAudio: false
     counterText: false
+    followDistance: false
     guide: false
+    guideInteractable: false
     guideVisual: false
     handRadius: false
+    handsGreen: false
+    handsWhite: false
+    heart: false
+    holdAudio: false
+    holdSeconds: false
     instructionText: false
+    manikin: false
+    manikinDistance: false
     pressDepth: false
     swapEvery: false
+    ui: false
+    uiRoot: false
   ScriptTypesHidden:
     {}
   ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
@@ -54,21 +67,51 @@
       guideVisual: !<reference.RenderMeshVisual> 00000000-0000-0000-0000-000000000000
       clickAudio: !<reference.AudioComponent> 00000000-0000-0000-0000-000000000000
       camera: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      ui: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+      uiRoot: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      heart: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      manikin: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      guideInteractable: !<MappingBased.AssignableType_2> 00000000-0000-0000-0000-000000000000
+      handsWhite: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      handsGreen: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      buttonAudio: !<reference.AudioComponent> 00000000-0000-0000-0000-000000000000
+      holdAudio: !<reference.AudioComponent> 00000000-0000-0000-0000-000000000000
       bpm: !<float> 110.000000
       pressDepth: !<float> 4.000000
       handRadius: !<float> 10.000000
       swapEvery: !<float> 120.000000
+      holdSeconds: !<float> 1.000000
+      followDistance: !<float> 45.000000
+      manikinDistance: !<float> 60.000000
+      chestWindowScale: 1.500000
   ScriptTypes:
     -
       {}
   InputLines:
+    - '// @ui {"widget":"group_start", "label":"References"}'
     - // @input Component.Text instructionText
     - // @input Component.Text counterText
     - // @input SceneObject guide
     - // @input Component.RenderMeshVisual guideVisual
     - // @input Component.AudioComponent clickAudio
     - // @input SceneObject camera
-    - // @input float bpm = 110
-    - // @input float pressDepth = 4
-    - // @input float handRadius = 10
-    - // @input float swapEvery = 120
+    - // @input AssignableType_1 ui
+    - // @input SceneObject uiRoot
+    - // @input SceneObject heart
+    - // @input SceneObject manikin
+    - // @input AssignableType_2 guideInteractable
+    - // @input Asset.Texture handsWhite
+    - // @input Asset.Texture handsGreen
+    - // @input Component.AudioComponent buttonAudio
+    - // @input Component.AudioComponent holdAudio
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - '// @input float bpm = 110 {"widget":"slider", "min":100, "max":120, "step":1}'
+    - '// @input float pressDepth = 4 {"widget":"slider", "min":2, "max":6, "step":0.5}'
+    - '// @input float handRadius = 10 {"widget":"slider", "min":5, "max":20, "step":1}'
+    - '// @input float swapEvery = 120 {"widget":"slider", "min":5, "max":300, "step":5}'
+    - '// @input float holdSeconds = 1 {"widget":"slider", "min":0.5, "max":3, "step":0.1}'
+    - '// @input float followDistance = 45 {"widget":"slider", "min":35, "max":70, "step":1}'
+    - '// @input float manikinDistance = 60 {"widget":"slider", "min":40, "max":90, "step":1}'
+    - '// @input float chestWindowScale = 1.5 {"widget":"slider", "min":1, "max":2, "step":0.05}'
+    - '// @ui {"widget":"group_end"}'

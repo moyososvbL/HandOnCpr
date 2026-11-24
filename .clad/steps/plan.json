@@ -1,0 +1,115 @@
+{
+  "step": "plan",
+  "status": "ok",
+  "errors": [],
+  "deviations": [
+    "Signed out (is_authorized=false): AI-generated models, images, and RSG tokens unavailable until sign-in; optional TTS not planned.",
+    "Main script is the user-mandated existing Assets/Scripts/CPRCoach.ts (class CPRCoach, extended not rewritten) instead of CPRCoachMain.ts; existing @inputs (instructionText, counterText, guide, guideVisual, clickAudio, camera, bpm, pressDepth, handRadius, swapEvery) and next() kept.",
+    "instructionText/counterText stay declared but become @allowUndefined fallbacks: text now lives in the CPRCoachUI module and CPRCoach writes through its setters (writes to the Text inputs only when wired).",
+    "Hold is a sub-state of Step.Place (handsOnSince >= 0), not a new enum value; Swap is a sub-state of Step.Push. Tab index map: Check=0, Call=1, Watch/Place/Hold=2, Push/Swap=3, Done=4; step label 'Step N of 5' = tab+1.",
+    "Real-glasses pinch-to-pin on the world mesh is not built (untestable in preview, brief marks it feel-unproven); on device the guide falls back to the existing camera-relative placeGuide(). Two-palm check kept as an alternative hold trigger.",
+    "Layout positions are relative to the camera pose at Lens start (preview camera assumed at origin); CPRCoachPlacement recomputes them at onStart. Manikin long axis runs along camera forward with the head away from the user, so 'toward head' = further away (-Z).",
+    "Manikin code-authored backend: CPRCoach only needs a SceneObject handle 'Manikin' (proxy Assets/GeneratedMeshes/Manikin.glb today); whatever the mesh step produces must keep that root name, grounded min-Y=0, head toward local -Z."
+  ],
+  "retries": 1,
+  "tier": "interactive",
+  "theme": {
+    "style": "realistic, clean, medical training, frosted glass UI",
+    "palette": "light neutral grey, bright white, soft green confirm, emergency red #F2392C accent",
+    "mood": "calm, clear, reassuring under stress"
+  },
+  "assets": [
+    { "type": "mesh", "name": "Manikin", "backend": "code-authored", "description": "adult CPR training manikin lying face-up on its back, built from simple rounded primitives: sphere head, short cylinder neck, broad capsule torso with flat chest, two capsule arms resting at its sides; uniform light neutral grey matte", "animate": "no", "rest": "flat_on_surface", "target_size_cm": { "x": 55, "y": 24, "z": 120 } },
+    { "type": "sfx", "name": "BeatClick", "description": "very short crisp dry metronome click, tight transient under 40 ms, one per beat at 110 BPM, clearly audible but not harsh" },
+    { "type": "sfx", "name": "ButtonPress", "description": "soft short UI confirm tap for pinching the step button" },
+    { "type": "sfx", "name": "HoldComplete", "description": "brief gentle rising two-tone confirm chime when the 1 second hands-in-place hold completes" },
+    { "type": "icon", "name": "warning", "description": "alert icon for the Check step tab" },
+    { "type": "icon", "name": "call", "description": "phone icon for the Call 112 step tab" },
+    { "type": "icon", "name": "back_hand", "description": "hand icon for Watch first / Place hands / Hold step tab" },
+    { "type": "icon", "name": "monitor_heart", "description": "heartbeat icon for Push / Swap step tab" },
+    { "type": "icon", "name": "check_circle", "description": "check icon for Help is here step tab" },
+    { "type": "ui", "name": "CPRCoachUI", "description": "Frosted-glass light translucent grey step window with vertical step tab bar on its left edge; light text for additive display; one card visible at a time; switches between head-follow and chest-anchored placement", "elements": [
+      { "element": "hud-panel", "name": "stepWindow", "description": "Frosted glass rounded window: small 60% white step label, large white semibold instruction, counter as the largest element, readable from 60-80 cm", "labels": ["Step 3 of 5", "Not responding? Not breathing normally?", "Call 112. Put the phone on speaker.", "Push down 5 cm", "Let the chest rise", "Match your hands to the guide. Arms straight. Shoulders over hands.", "Hold still", "Push hard, push fast.", "Swap with someone if you can", "Help is here", "9,999", "Time 88:88 · 9,999 compressions"], "container": "frame" },
+      { "element": "button", "name": "actionButton", "description": "Single large pinch button inside the window; red #F2392C on Check, hidden on Place hands and Hold; highlights on hover", "labels": ["Start CPR", "Called", "I'm ready", "Help arrived", "Finish"], "container": "frame" },
+      { "element": "progress-bar", "name": "holdProgress", "description": "Short horizontal progress bar filling over 1 s, visible only in Hold step, resets to empty on early release", "labels": [], "container": "frame" },
+      { "element": "tab-bar", "name": "stepTabBar", "description": "Vertical glass capsule on the left edge of the window with 5 round icon tabs (warning, call, back_hand, monitor_heart, check_circle); active = filled white circle with dark icon, finished = white icon, upcoming = 45% opacity; display-only", "labels": ["Check", "Call 112", "Hands", "Push", "Done"], "container": "capsule" }
+    ]}
+  ],
+  "spatial_layout": [
+    { "name": "CPRCoach", "root": "CPRCoach", "frame": "world", "position_cm": { "x": 0, "y": 0, "z": 0 }, "size_cm": { "x": 0, "y": 0, "z": 0 }, "note": "empty manager root at top of hierarchy; carries CPRCoach.ts and the three AudioComponents" },
+    { "name": "Manikin", "root": "Manikin", "frame": "world (camera-relative at start)", "position_cm": { "x": 0, "y": -90, "z": -48 }, "size_cm": { "x": 55, "y": 24, "z": 120 }, "rotation_deg": { "x": 0, "y": 0, "z": 0 }, "note": "grounded origin at base on floor (floor = camY - 90); head toward -Z; chest top face y=-66; chest point (lower half of breastbone, nipple line) = local (0,24,-12) = world (0,-66,-60) i.e. manikinDistance 60 ahead; enabled at start, disabled when !global.deviceInfoSystem.isEditor(); TODO: verify with aabb_cm", "relation": "far from CPRCoachUI follow pose" },
+    { "name": "HandsGuide", "root": "HandsGuide", "frame": "world", "position_cm": { "x": 0, "y": -65.5, "z": -60 }, "size_cm": { "x": 22, "y": 0.1, "z": 22 }, "rotation_deg": { "x": -90, "y": 0, "z": 0 }, "note": "plane scaled to 22x22 lying flat, normal +Y; unlit alpha-blended material, baseTex hands_white.png / hands_green.png; components: RenderMeshVisual, box ColliderComponent 22x22x4, IK Interactable; hidden until Watch; press anim moves down by pressDepth", "relation": "on Manikin chest (22x22 footprint < 55 cm chest width), 0.5 cm above chest top face" },
+    { "name": "Heart", "root": "Heart", "frame": "world", "position_cm": { "x": 20, "y": -60, "z": -60 }, "size_cm": { "x": 10, "y": 10, "z": 0.1 }, "note": "unlit alpha-blended plane heart.png, upright, rotated at anchor time to face the camera; visible only in Push; pulse 1.0->1.12 per beat; x 15..25 vs guide x -11..11 = 4 cm gap", "relation": "near HandsGuide (20 cm right, chest height)" },
+    { "name": "CPRCoachUI (follow pose: Check, Call)", "root": "CPRCoachUI", "frame": "world, scene-root parent (local == world), updated per frame", "position_cm": { "x": 0, "y": -3, "z": -45 }, "size_cm": { "x": 20.2, "y": 15, "z": 1 }, "note": "lazy head-follow: target = camPos + flatForward*followDistance(45), y = camY - 3; lerp ~4/s, yaw-only face camera; span x -10.1..10.1 fits 21.7 cm visible width at 45 cm; y -10.5..4.5 inside visible band -19..+10.6 at 45 cm", "relation": "far from Manikin" },
+    { "name": "CPRCoachUI (chest-anchored pose: Watch..Done)", "root": "CPRCoachUI", "frame": "world, scene-root parent", "position_cm": { "x": 0, "y": -54, "z": -85 }, "size_cm": { "x": 30.3, "y": 22.5, "z": 1 }, "note": "anchored once at Watch: position = chestPos + towardHead*25 + up*12 (towardHead = manikin -Z); rotation = look at camera position at anchor time (tilted ~32 deg to face user), then fixed; scale = chestWindowScale 1.5; window z=-85 is behind guide z -71..-49, no overlap", "relation": "near HandsGuide (25 cm beyond toward head, 12 cm up)" },
+    { "name": "StepWindow", "root": "CPRCoachUI/StepWindow", "frame": "local to CPRCoachUI", "position_cm": { "x": 2.6, "y": 0, "z": 0 }, "size_cm": { "x": 15, "y": 12, "z": 1 }, "note": "UIKit Frame full extent 15x12 incl. 1.5 cm margins (not the 4 cm default); contents top to bottom: stepLabel y +4.5, instruction y +2, counter (largest) y -1, holdProgress 10x0.8 y -3.5 (Hold only), actionButton 10x2.6 y -4.4 (hidden in Place/Hold)" },
+    { "name": "StepTabBar", "root": "CPRCoachUI/StepTabBar", "frame": "local to CPRCoachUI", "position_cm": { "x": -8.5, "y": 0, "z": 0 }, "size_cm": { "x": 3.2, "y": 15, "z": 1 }, "note": "vertical glass capsule, 5 round 2.4 cm tabs at 2.8 cm pitch; x -10.1..-6.9 vs window -4.9..10.1 = 2 cm gap (coplanar, no intersection)" }
+  ],
+  "script_plan": {
+    "files": [
+      "Assets/Scripts/CPRCoach.ts",
+      "Assets/Scripts/CPRCoachUI.ts",
+      "Assets/Scripts/CPRCoachPlacement.ts"
+    ],
+    "ownership": {
+      "Assets/Scripts/CPRCoach.ts": "EXTEND existing @component CPRCoach on root 'CPRCoach': step state (Step enum unchanged), count/timers/swap, hold sub-state, beat, guide press anim + texture swap, heart pulse, audio cues, manikin visibility, UI placement mode; drives CPRCoachUI via setters, subscribes ui.onAction -> next(); binds guide IK Interactable in OnStartEvent (onTriggerStart -> beginHold, onTriggerEnd/onTriggerCanceled -> cancelHold); header comment justifies size if >250 lines",
+      "Assets/Scripts/CPRCoachUI.ts": "@component on 'CPRCoachUI' root (children StepWindow, StepTabBar): passive UIKit view (Frame, texts, one button, progress bar, tab bar); no step logic; never moves its own root",
+      "Assets/Scripts/CPRCoachPlacement.ts": "plain TS module, no @component: pure pose math returning {position: vec3, rotation: quat}: manikinPose(camT, chestDistance, floorBelowEye), chestPoint(manikinT), followPose(camT, distance, currentPos, dt), anchoredWindowPose(chestPos, towardHead, camPos), heartPose(chestPos, right, camPos); no scene mutation"
+    },
+    "cpr_coach_changes": [
+      "new @inputs (References): ui: CPRCoachUI; uiRoot: SceneObject; heart: SceneObject; manikin: SceneObject; guideInteractable: Interactable (IK); handsWhite: Texture; handsGreen: Texture; buttonAudio: AudioComponent; holdAudio: AudioComponent",
+      "new @inputs (Settings): holdSeconds=1; followDistance=45; manikinDistance=60; chestWindowScale=1.5",
+      "OnStartEvent: clone guide material, place manikin via Placement (floor = camY - 90, chest manikinDistance ahead), hide manikin when !global.deviceInfoSystem.isEditor(), bind ui.onAction and guide Interactable, goTo(Check)",
+      "goTo(): push ui.setStepLabel/setInstruction/setCounter/setButton/setActiveTab/setHoldProgress(0,false); heart enabled only in Push; Watch: guide on manikin chest (editor) else camera-relative placeGuide fallback, anchor UI + heart; Check: UI back to follow mode, guide + heart hidden",
+      "Place/Hold: hold active if pinch-hold on guide OR both palms within handRadius; on start GREEN + handsGreen, instruction 'Hold still', progress elapsed/holdSeconds shown; early release WHITE + handsWhite, progress 0 hidden; complete holdAudio.play(1) then goTo(Push)",
+      "Push: beat unchanged (clickAudio per beat, count++); heart scale 1.12 at each beat easing to 1.0 within the beat; swap reminder via setCounter for 3 s every swapEvery",
+      "Done: instruction 'Help is here', counter 'Time m:ss · N compressions', button 'Finish'; Finish goes to Check",
+      "next(): buttonAudio.play(1) then existing advance logic; no-op in Place",
+      "setColor(c): keep baseColor tint and swap mainPass.baseTex to handsGreen/handsWhite",
+      "update(): follow-mode tick of uiRoot via Placement.followPose while step is Check or Call"
+    ],
+    "button_labels": { "Check": "Start CPR (accent red #F2392C)", "Call": "Called", "Watch": "I'm ready", "Place": "(hidden)", "Push": "Help arrived", "Done": "Finish" },
+    "instruction_strings": { "Check": "Not responding?\nNot breathing normally?", "Call": "Call 112.\nPut the phone on speaker.", "Watch": "Watch, then copy.\nLock your fingers. Push straight down.", "Place": "Match your hands to the guide.\nArms straight. Shoulders over hands.", "Hold": "Hold still", "Push": "Push hard, push fast.", "Done": "Help is here" },
+    "exposure_plan": {
+      "CPRCoach": "References: existing (instructionText/counterText now @allowUndefined, guide, guideVisual, clickAudio, camera) + ui, uiRoot, heart, manikin, guideInteractable, handsWhite, handsGreen, buttonAudio, holdAudio. Settings: bpm Slider 100-120, pressDepth Slider 2-6, handRadius Slider 5-20, swapEvery Slider 5-300 default 120, holdSeconds Slider 0.5-3, followDistance Slider 35-70, manikinDistance Slider 40-90, chestWindowScale Slider 1-2. 8 tunables because the 4 pre-existing ones are user-mandated.",
+      "CPRCoachUI": "Settings: accentColor ColorWidget vec4 #F2392C, glassTint ColorWidget vec4 light grey (0.85,0.87,0.9,0.35), textColor ColorWidget white. References: 5 icon Textures from Assets/Icons/ (warning, call, back_hand, monitor_heart, check_circle)"
+    },
+    "wiring": {
+      "CPRCoach.ui": "CPRCoachUI component on CPRCoachUI root",
+      "CPRCoach.uiRoot": "CPRCoachUI SceneObject",
+      "CPRCoach.guide": "HandsGuide",
+      "CPRCoach.guideVisual": "HandsGuide RenderMeshVisual",
+      "CPRCoach.guideInteractable": "HandsGuide Interactable",
+      "CPRCoach.heart": "Heart",
+      "CPRCoach.manikin": "Manikin",
+      "CPRCoach.camera": "Camera Object",
+      "CPRCoach.handsWhite": "Assets/Textures/hands_white.png",
+      "CPRCoach.handsGreen": "Assets/Textures/hands_green.png",
+      "CPRCoach.clickAudio": "AudioComponent on CPRCoach root, Assets/GeneratedSFX/BeatClick.wav, LowLatency",
+      "CPRCoach.buttonAudio": "AudioComponent on child 'ButtonAudio', Assets/GeneratedSFX/ButtonPress.wav",
+      "CPRCoach.holdAudio": "AudioComponent on child 'HoldAudio', Assets/GeneratedSFX/HoldComplete.wav",
+      "Heart material": "unlit alpha-blended, baseTex Assets/Textures/heart.png",
+      "Scene hygiene": "InteractionKitExamples removed/disabled; CPRCoach root above CPRCoachUI in hierarchy"
+    }
+  },
+  "ui_api": [
+    {
+      "path": "Assets/Scripts/CPRCoachUI.ts",
+      "class_name": "CPRCoachUI",
+      "public_methods": [
+        "setStepLabel(text: string): void",
+        "setInstruction(text: string): void",
+        "setCounter(text: string): void",
+        "setButton(label: string, visible: boolean, accent: boolean): void",
+        "setHoldProgress(value01: number, visible: boolean): void",
+        "setActiveTab(index: number): void",
+        "setVisible(visible: boolean): void"
+      ],
+      "events": [
+        "onAction: PublicApi<void>"
+      ],
+      "notes": "setActiveTab index 0..4: tabs < index finished (white icon), == index active (filled white circle, dark icon), > index upcoming (45% opacity). Button pinch fires onAction. Build UIKit content in onAwake; buffer setter calls made before build. CPRCoach moves the root transform; the module must not reposition its own root."
+    }
+  ],
+  "music_included": false
+}

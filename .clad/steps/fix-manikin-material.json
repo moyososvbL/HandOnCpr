@@ -1,0 +1,35 @@
+{
+  "step": "bootstrap-scripts",
+  "mode": "fix",
+  "fix": "manikin-material",
+  "status": "ok",
+  "errors": [],
+  "deviations": [
+    "Material created from GLTFMaterialPreset (same GLTF shader family as the GLB-embedded ManikinGrey) instead of duplicateAsset, because GLB-packed materials cannot be duplicated",
+    "No VirtualScene apply, recompile, or runtime capture: the scope was a fix, and the brief said not to recompile or refresh previews while the concurrent UI agent works"
+  ],
+  "retries": 0,
+  "applies_used": 0,
+  "wired_inputs": [],
+  "apply_errors": [],
+  "material": {
+    "asset_id": "3b0e7f4c-d7bd-4cf4-976b-51b18e8fb903",
+    "path": "Assets/Materials/ManikinMid.mat",
+    "baseColorFactor": [0.5, 0.52, 0.55, 1],
+    "metallicFactor": 0,
+    "roughnessFactor": 0.85,
+    "ENABLE_GLTF_LIGHTING": true
+  },
+  "rmv_readback": {
+    "component_id": "190c9499-5664-4869-b134-a37b934ff39d",
+    "scene_object_id": "6f357fbe-b516-42ed-85ad-cf92d0842676",
+    "before": "ManikinGrey (665dc730-99f4-4662-8131-c98f61ebecd3)",
+    "mainMaterial": "ManikinMid (3b0e7f4c-d7bd-4cf4-976b-51b18e8fb903)",
+    "materials[0]": "ManikinMid (3b0e7f4c-d7bd-4cf4-976b-51b18e8fb903)"
+  },
+  "placement": { "overlaps": [], "containment_violations": [], "viewport_escapes": [] },
+  "synckit_hygiene": null,
+  "project_saved": true,
+  "runtime_log_status": "not_read",
+  "screenshot_paths": []
+}

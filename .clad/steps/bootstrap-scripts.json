@@ -1,0 +1,44 @@
+{
+  "step": "bootstrap-scripts",
+  "status": "ok",
+  "errors": [],
+  "deviations": [
+    "Apply 1 (VirtualScene) created CPRCoach/ButtonAudio and CPRCoach/HoldAudio, each with an AudioComponent, and added an AudioComponent (BeatClick.wav) and a CPRCoach.ts ScriptComponent (d0f36a84-682e-479b-b80a-de83f0461ad0) to CPRCoach. All 3 audioTrack refs read back non-null.",
+    "AudioComponent playbackMode is not an edit-time property ('Property playbackMode not found'), so LowLatency was not set. Clips play with the default mode, and no script sets audio.playbackMode at runtime. If beat-click latency matters, set clickAudio.playbackMode = Audio.PlaybackMode.LowLatency in CPRCoach.onAwake.",
+    "Apply 2 (VirtualScene modify) was refused whole (applied 0) because path components.CPRCoach.<field> did not resolve: the component type is ScriptComponent. Rather than spend a 3rd apply, all refs went through scene-graphql setProperty REFERENCE (string UUID each): ui, guideInteractable, guideVisual, clickAudio, buttonAudio, holdAudio, guide, camera, uiRoot, heart, manikin (wrapper 6dfab518), handsWhite (dca65dfa), handsGreen (117e64f5). Every one read back non-null. The numeric inputs already held the manifest values (110/4/10/120/1/45/60/1.5), confirmed on read-back, so no write was needed. instructionText and counterText were left null as instructed.",
+    "Colliders: none created. The HandsGuide Box collider from bootstrap-ui (22x22x6.6 cm) already matches target; Manikin needs none.",
+    "Runtime placement was read from QueryRuntimeSceneTool bounds, not edit-time GetBoundingBox, because the script poses objects at runtime. Manikin is at world (0,-90,-46) with AABB x[-27.5,27.5] y[-90,-66] z[-106,14]. CPRCoachUI is at (0,-3,-45) with AABB x[-10.1,10.1] y[-10.5,4.5] z[-45.4,-44.4]. StepWindow x[-4.9,10.1] and StepTabBar x[-10.1,-6.9] do not overlap. The UI sits about 55 cm above the manikin top, so no overlap. Camera pitch is -12 deg. The UI at z=-45 is inside the scaled viewport band (about +/-10.8 cm X).",
+    "HandsGuide and Heart are disabled at runtime at start (the script gates them by step), so they could not be measured or captured in the baseline. Placement for the guide on the chest was not verified at runtime. audit-runtime should check it after advancing past the intro step.",
+    "Project saved via model.project.save(). Assets/Scene.scene mtime 23:17:43 contains ButtonAudio and HoldAudio.",
+    "Recommend running ls-clad:specs-sync-kit-validator: not applicable (SyncKit not installed)."
+  ],
+  "retries": 0,
+  "applies_used": 2,
+  "apply_errors": [
+    "apply 1: playbackMode not found on AudioComponent (x3). Components were still added and tracks are bound.",
+    "apply 2: CPRCoach#0 not found (only 0 of type) for 15 components.CPRCoach.* paths, applied 0. Rewired via scene-graphql REFERENCE and read back."
+  ],
+  "wired_inputs": [
+    {"input": "ui", "target": "CPRCoachUI ScriptComponent 0f01f0da-4fce-413f-bcb9-183baa5e2894", "verified": true},
+    {"input": "uiRoot", "target": "CPRCoachUI e230030b-3c12-4b15-a868-e5c87f66afab", "verified": true},
+    {"input": "guide", "target": "HandsGuide ebd7e872-a112-4f61-93bc-5581f71ba3af", "verified": true},
+    {"input": "guideVisual", "target": "RenderMeshVisual 7ef40c62-4002-40a8-9749-eb75e5055050", "verified": true},
+    {"input": "guideInteractable", "target": "Interactable cb048614-e52c-4ecd-bd22-cb9fe151ddc5", "verified": true},
+    {"input": "heart", "target": "Heart 4287c51e-9ef6-4475-b880-fca2f082b2e4", "verified": true},
+    {"input": "manikin", "target": "Manikin wrapper 6dfab518-93c2-4c2c-929b-bd3a33e8981d", "verified": true},
+    {"input": "camera", "target": "Camera Object 00000000-0000-0065-0000-000000000064", "verified": true},
+    {"input": "handsWhite", "target": "Assets/Textures/hands_white.png dca65dfa-0194-4c03-8a15-f8f0f42945c2", "verified": true},
+    {"input": "handsGreen", "target": "Assets/Textures/hands_green.png 117e64f5-c2ed-4b1d-a003-b184e38d4c7b", "verified": true},
+    {"input": "clickAudio", "target": "AudioComponent b132ebd1-511f-4aae-91fa-d73c0d9ea192 on CPRCoach (BeatClick.wav)", "verified": true},
+    {"input": "buttonAudio", "target": "AudioComponent e439947b-16a7-44ac-a2fc-833673bec8dd on CPRCoach/ButtonAudio (ButtonPress.wav)", "verified": true},
+    {"input": "holdAudio", "target": "AudioComponent 34a9cd61-3e9b-495a-8da3-0452a8e18323 on CPRCoach/HoldAudio (HoldComplete.wav)", "verified": true},
+    {"input": "bpm/pressDepth/handRadius/swapEvery/holdSeconds/followDistance/manikinDistance/chestWindowScale", "target": "110/4/10/120/1/45/60/1.5", "verified": true}
+  ],
+  "placement": {"overlaps": [], "containment_violations": [], "viewport_escapes": []},
+  "synckit_hygiene": null,
+  "project_saved": true,
+  "created_roots": ["ButtonAudio", "HoldAudio"],
+  "created_root_ids": {"ButtonAudio": "31e3938d-9a62-4f70-a9b1-8946d6ff6ed5", "HoldAudio": "a663a4ad-0cdf-425e-b2f5-cb28c5fc2c48", "CPRCoach.ScriptComponent": "d0f36a84-682e-479b-b80a-de83f0461ad0"},
+  "screenshot_paths": ["C:/Users/pc/.claude/projects/C--Users-pc-Documents-HandOnCpr/252c9f66-cc8a-49d4-bfa1-a61c86c30fec/tool-results/mcp-lens-studio-blob-1795558702869-mx6jk5.jpg"],
+  "runtime_log_status": "clean"
+}

@@ -1,0 +1,33 @@
+{
+  "step": "audit-runtime",
+  "status": "partial",
+  "errors": [],
+  "deviations": [
+    "Runtime queries timed out from about 23:22 to 23:25: the Leaf and Bitmoji 3D packages were installed at 23:21 by another actor, which triggered a 47 s TypeScript recompile. Measurements were taken only after 'TypeScript compilation succeeded' and the lens reset at 23:25:54. I did not refresh or recompile.",
+    "Obs 3 confirmed OK. In Preview 1 the camera is at z=285.4 and the Manikin root is at (0,-90,239.4), which is 46 cm ahead along flat forward with the floor 90 cm below the eye. In the Headless Preview the camera is at the origin and the root is at (0,-90,-46). Placement is camera-relative at runtime, not the authored z=-48.",
+    "Manikin size OK. Runtime bounds give 55 x 24 x 120 cm against aabb_cm [55,24,120]. Scale chain from one snapshot: CPRCoach[1] > Manikin[1] > ManikinMesh[100] > Scenes[1] > Scene0[1] > Manikin RMV[1]. There is one x100 import root and no wrapper leak.",
+    "By design (plan: long axis along camera forward, head away), the Manikin's foot end reaches z=+14 relative to the camera, so about 14 cm of the body lies under or behind the user's eye point. This is noted, not flagged.",
+    "Obs 2 is a verification gap, not a defect. CaptureRuntimeView of Preview 1 at the camera-relative region shows the Manikin and the CPRCoachUI panel rendering. Every authored object and the camera use renderLayer mask 1, and the camera's renderTarget is 'Render Target'. Panel screenshots of Preview 1, taken twice, show only the dimmed simulated room at 1392x2836. That looks like a panel-capture composite artefact (environment layer only), but I could not confirm it from the user's eye view.",
+    "AiPreviewAgent Handler is not in Assets/Scene.scene. It is the tool helper and is correctly unsaved.",
+    "On-interaction state (HandsGuide and Heart, enabled at Watch/Push) was not sized here because the orchestrator is driving the button flow. Unverified gap."
+  ],
+  "retries": 3,
+  "issues": [
+    {
+      "category": "ui-text-contrast",
+      "severity": "hard",
+      "file": "Assets/Scripts/CPRCoachUI.ts",
+      "detail": "Confirms orchestrator obs 1. Runtime capture of CPRCoachUI shows white text (textColor {1,1,1,1}) on the light-grey glass fill (glassTint {0.85,0.87,0.9,0.35}). StepLabel 'Step 1 of 5' (60% white) is nearly invisible, and the instruction 'Not responding? Not breathing normally?' has low contrast. The same light fill is behind the StepTabBar's inactive icons, which are also washed out. Fix in the UI module: use a dark or neutral System3 surface instead of the light glassTint (or dark text on light glass), and raise StepLabel opacity.",
+      "responsible_step": "ui"
+    }
+  ],
+  "runtime_log_status": "clean",
+  "scene_saved": true,
+  "debris_found": [],
+  "checks": {
+    "theme_manager": "single, first root, _theme=System3 (UIKit 4.0)",
+    "zzprobe_objects": "none (edit scene and Headless runtime)",
+    "scene_file": "Assets/Scene.scene mtime 23:17; all authored roots and the IDs of the wired inputs (Manikin, HandsGuide, Heart, StepWindow, StepTabBar, CPRCoachUI script, HoldAudio) are present on disk",
+    "post_reset_log": "no E/F lines, no exceptions; only SceneMaterialBatcher 'Text'/'Label' batching warnings"
+  }
+}

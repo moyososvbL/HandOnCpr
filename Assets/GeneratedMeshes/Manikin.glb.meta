@@ -1,12 +1,15 @@
 - !<AssetImportMetadata/47f42896-13e0-4df9-8e34-9705528e18ae>
   ImportedAssetIds:
+    .hidden/ManikinGrey: !<reference> 869b0e5f-aedf-4976-b94b-a76a572e1a73
     26ba073d67b9d0dd: !<reference> 44147e6f-a30a-4099-9e71-664bf58b4596
+    507afcee7dc5970b: !<reference> abcdd2cc-369a-4fca-a99a-b0e381d4d68e
     88ab437fd121cc69: !<reference> d8903cec-1763-4fb4-b33c-063b65d5ca0d
     8c2c6f3cf8d060fd: !<reference> aa7c9420-ea33-4ae5-a432-5a898db51200
-    Meshes/Mesh 1: !<reference> c5746e99-37df-4307-8a94-ecd160c69e99
+    Materials/ManikinGrey: !<reference> 665dc730-99f4-4662-8131-c98f61ebecd3
+    Materials/ManikinGrey|ManikinGrey|GraphPassInfo: !<reference> 2664a315-55ea-460e-90b0-a001fd47b165
+    Meshes/Manikin: !<reference> 7f8d399e-4aa0-480d-b47f-63587a990606
     Scene: !<reference> 405475dd-a7c3-4a33-955b-55795ee6872e
-    d596665d1a4bffd1: !<reference> 06763e88-ce63-4edb-95a1-9ec6a9687147
-    ed3acca98b96b0a1: !<reference> b6d1b6ad-5b54-4060-99be-3590c9eb0f55
+    cc936b7cc23db38f: !<reference> f71b73e9-40ea-4c62-bee6-9a6f0391df0f
   ImporterName: GltfImporter
   PrimaryAsset: !<reference> 405475dd-a7c3-4a33-955b-55795ee6872e
   PackageType: LegacyPackage

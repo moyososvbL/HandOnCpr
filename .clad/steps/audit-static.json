@@ -1,0 +1,31 @@
+{
+  "step": "audit-static",
+  "status": "ok",
+  "errors": [],
+  "deviations": [
+    "requireAsset lint: 1 site (CPRCoachUI.ts:421, dynamic paths ../Icons/{warning,call,back_hand,monitor_heart,check_circle}.png); all 5 resolve to Assets/Icons/*.png on disk.",
+    "Hard Rule 3 grep: 0 Component.Text / createComponent('Text') / UIKit imports in non-UI scripts. Note: CPRCoach.ts keeps two @allowUndefined legacy Text @inputs (instructionText, counterText; lines 56-57, written at 206/213) as a fallback for the pre-existing file; the grep does not match them, so they are not filed as an issue. bootstrap should leave them unwired.",
+    "Hand-rolled UI in CPRCoachUI.ts: 0 violations. Text at 276/390 sits inside FlexLayout columns; plates are UIKit RoundedRectangle; no ColliderComponent/Interactable button. Carve-out: 0 matches.",
+    "Theme-private writes: 0 hits. BackPlate: 0 hits. Dismiss affordance: no Frame and no close button in CPRCoachUI.ts (N/A).",
+    "StepWindow uses a RoundedRectangle glass plate instead of the plan's 'frame' container. The ui step declared this in ui.json deviations, so it is not filed again here.",
+    "Music: none planned (music_included false), so the play(-1) check does not apply.",
+    "Manifest-disk-scripts: Manikin.glb, BeatClick/ButtonPress/HoldComplete.wav, 5 icons, hands_white/hands_green/heart.png all on disk. Scripts consume them through @inputs (manikin, clickAudio/buttonAudio/holdAudio, handsWhite/handsGreen, heart, icon*) plus the icon requireAsset fallback. Whether those inputs are wired in the scene is left to audit-runtime."
+  ],
+  "retries": 0,
+  "issues": [
+    {
+      "category": "module-size",
+      "severity": "soft",
+      "file": "Assets/Scripts/CPRCoachUI.ts",
+      "detail": "502 lines (>400) and the header comment gives no reason for the size. The StepWindow builder and the StepTabBar builder (plus icon resolution) could be split into separate modules, or a size justification could be added to the header.",
+      "responsible_step": "ui"
+    },
+    {
+      "category": "exposure-knob-cap",
+      "severity": "soft",
+      "file": "Assets/Scripts/CPRCoach.ts",
+      "detail": "Interactive-tier component exposes 8 tunable @inputs (bpm, pressDepth, handRadius, swapEvery, holdSeconds, followDistance, manikinDistance, chestWindowScale; lines 74-81), above the ~6 cap. All 8 are read by code. Either trim to the highest-value knobs (for example demote chestWindowScale and manikinDistance to in-code defaults) or record that the plan required them.",
+      "responsible_step": "scripts"
+    }
+  ]
+}

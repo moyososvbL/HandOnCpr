@@ -1,0 +1,25 @@
+{
+  "step": "skeleton",
+  "status": "partial",
+  "errors": [],
+  "deviations": [
+    "visible_confirmed=false: runtime capture refused because the project has a TS error (Assets/Scripts/CPRCoach.ts(19,28) cannot find module './CPRCoachUI' - the concurrent ui step has not written CPRCoachUI.ts yet). RunAndCollectLogsTool refresh: no runtime errors, lens never ran ('TypeScript is not compiled'). Not a crash loop; re-capture after ui/scripts compile.",
+    "Edit-time GetBoundingBox (includeChildren) on Manikin = min(-27.5,-90,-108) max(27.5,-66,12): 55x24x120 cm, grounded at floor y=-90, footprint centred at z=-48 - matches plan exactly; real (non-phantom) mesh bounds.",
+    "First apply rejected _prefab '@asset:GeneratedMeshes/Manikin.glb' (Prefab not found); second apply used the ObjectPrefab id @id:405475dd-a7c3-4a33-955b-55795ee6872e. Use that id form for any re-bind.",
+    "Structure: CPRCoach (root, 0,0,0) > Manikin (plain wrapper, scale 1) > ManikinMesh (GLB prefab root, localScale 100) > Scenes > ... > a GLB-internal node ALSO named 'Manikin' (6f357fbe-...). Refer to the wrapper by @id:6dfab518-93c2-4c2c-929b-bd3a33e8981d or '@sceneObject:Manikin#0' to avoid ambiguity.",
+    "Manikin, HandsGuide, Heart are parented under CPRCoach (at origin, so local == world).",
+    "HandsGuide placed at the real chest point (0,-69,-62) = manikin pos + chest_point_local (0,21,-14), not the plan's (0,-65.5,-60). It is an empty anchor: no RenderMeshVisual/collider/Interactable (structure only; bootstrap adds them). Heart is an empty anchor at (20,-60,-60).",
+    "CPRCoachUI / StepWindow / StepTabBar NOT created: UI surfaces belong to the ui/bootstrap-ui steps; bootstrap-ui should create them with exactly those names (CPRCoachUI as a scene-root sibling after CPRCoach).",
+    "InteractionKitExamples already disabled (enabled=false) at scene root; left as-is. Project not saved (bootstrap-scripts owns the save)."
+  ],
+  "retries": 1,
+  "applies_used": 2,
+  "apply_errors": ["apply 1: createObject $temp:manikinMesh - Prefab not found: @asset:GeneratedMeshes/Manikin.glb (fixed in apply 2)"],
+  "created_roots": ["CPRCoach", "Manikin", "HandsGuide", "Heart"],
+  "created_root_ids": {"CPRCoach": "2d712bde-4243-48e8-a632-138aeaf0dbe7", "Manikin": "6dfab518-93c2-4c2c-929b-bd3a33e8981d", "ManikinMesh": "ddce20ba-46f2-4742-bd5f-de43adba4b77", "HandsGuide": "ebd7e872-a112-4f61-93bc-5581f71ba3af", "Heart": "4287c51e-9ef6-4475-b880-fca2f082b2e4"},
+  "instantiated": [
+    {"mesh": "Assets/GeneratedMeshes/Manikin.glb", "object_name": "Manikin/ManikinMesh", "position_cm": {"x": 0, "y": -90, "z": -48}, "count": 1}
+  ],
+  "visible_confirmed": false,
+  "runtime_log_status": "clean"
+}

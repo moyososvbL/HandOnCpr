@@ -1,0 +1,224 @@
+{
+  "step": "scripts",
+  "status": "ok",
+  "errors": [],
+  "deviations": [
+    "Fix-mode reconcile against ui.json: import ./CPRCoachUI, named class CPRCoachUI, and onAction: PublicApi<void> match the shipped file. All 6 setters called by CPRCoach.ts (setStepLabel, setInstruction, setCounter, setButton, setHoldProgress, setActiveTab) match their signatures exactly. setVisible exists but is not called. No edits to CPRCoach.ts or CPRCoachPlacement.ts were needed.",
+    "Ran the verifier with --icon for all 5 icons (warning, call, back_hand, monitor_heart, check_circle): 0 errors. The orphan-icon check now resolves through CPRCoachUI.ts requireAsset. One warning remains: CPRCoachUI.ts is 503 lines (>400) with no size reason in its header. ui owns that file, so it is left for the ui step.",
+    "RecompileTypeScriptTool succeeded with no errors. I did not do a runtime log check because this step makes no scene writes and bootstrap has not attached the scripts yet.",
+    "CPRCoachUI requires authored children StepWindow and StepTabBar under its root (ui.json scene contract). bootstrap-ui owns them.",
+    "Cross-checked against mesh.json: aabb_cm [55,24,120], grounded, min-Y 0, head -Z, chest_point_local_cm [0,21,-14]. Plan spatial_layout used (0,24,-12). The code uses the mesh value, so the manikin root sits 46 cm ahead (60-14) and the guide sits 0.5 cm above chest y=21.",
+    "The guide, heart and uiRoot keep their authored local scale: press, pulse and chestWindowScale multiply it. The old code's setLocalScale(s,s,s) would have shrunk the 22x22 plane to about 1.",
+    "Hold is pinch-hold (Interactable onTriggerStart/End/Canceled) OR both palms within handRadius. guideInteractable, buttonAudio and holdAudio are @allowUndefined and null-guarded.",
+    "The beat resyncs after a long frame stall instead of firing a burst of catch-up clicks."
+  ],
+  "retries": 1,
+  "scripts": [
+    {
+      "path": "Assets/Scripts/CPRCoach.ts",
+      "role": "entry",
+      "inputs": [
+        {
+          "name": "instructionText",
+          "type": "Text"
+        },
+        {
+          "name": "counterText",
+          "type": "Text"
+        },
+        {
+          "name": "guide",
+          "type": "SceneObject"
+        },
+        {
+          "name": "guideVisual",
+          "type": "RenderMeshVisual"
+        },
+        {
+          "name": "clickAudio",
+          "type": "AudioComponent"
+        },
+        {
+          "name": "camera",
+          "type": "SceneObject"
+        },
+        {
+          "name": "ui",
+          "type": "CPRCoachUI"
+        },
+        {
+          "name": "uiRoot",
+          "type": "SceneObject"
+        },
+        {
+          "name": "heart",
+          "type": "SceneObject"
+        },
+        {
+          "name": "manikin",
+          "type": "SceneObject"
+        },
+        {
+          "name": "guideInteractable",
+          "type": "Interactable"
+        },
+        {
+          "name": "handsWhite",
+          "type": "Texture"
+        },
+        {
+          "name": "handsGreen",
+          "type": "Texture"
+        },
+        {
+          "name": "buttonAudio",
+          "type": "AudioComponent"
+        },
+        {
+          "name": "holdAudio",
+          "type": "AudioComponent"
+        },
+        {
+          "name": "bpm",
+          "type": "number"
+        },
+        {
+          "name": "pressDepth",
+          "type": "number"
+        },
+        {
+          "name": "handRadius",
+          "type": "number"
+        },
+        {
+          "name": "swapEvery",
+          "type": "number"
+        },
+        {
+          "name": "holdSeconds",
+          "type": "number"
+        },
+        {
+          "name": "followDistance",
+          "type": "number"
+        },
+        {
+          "name": "manikinDistance",
+          "type": "number"
+        },
+        {
+          "name": "chestWindowScale",
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "path": "Assets/Scripts/CPRCoachPlacement.ts",
+      "role": "helper module (pure pose math, no @component)",
+      "inputs": []
+    }
+  ],
+  "recompile_status": "ok",
+  "lifecycle_gate": "passed",
+  "fanout": {
+    "files_total": 2,
+    "files_delegated": 0,
+    "spawn_messages": 0,
+    "inline_files": [
+      "Assets/Scripts/CPRCoach.ts",
+      "Assets/Scripts/CPRCoachPlacement.ts"
+    ]
+  },
+  "animation_gated": [
+    "Manikin"
+  ],
+  "aabb_applied": true,
+  "wiring_manifest": {
+    "attach": [
+      {
+        "script": "Assets/Scripts/CPRCoach.ts",
+        "root": "CPRCoach",
+        "note": "top of hierarchy, above CPRCoachUI"
+      }
+    ],
+    "audio_components": [
+      {
+        "host": "CPRCoach",
+        "create_child": null,
+        "asset": "Assets/GeneratedSFX/BeatClick.wav",
+        "playback_mode": "LowLatency",
+        "input": "clickAudio"
+      },
+      {
+        "host": "CPRCoach",
+        "create_child": "ButtonAudio",
+        "asset": "Assets/GeneratedSFX/ButtonPress.wav",
+        "playback_mode": "LowLatency",
+        "input": "buttonAudio"
+      },
+      {
+        "host": "CPRCoach",
+        "create_child": "HoldAudio",
+        "asset": "Assets/GeneratedSFX/HoldComplete.wav",
+        "playback_mode": "LowLatency",
+        "input": "holdAudio"
+      }
+    ],
+    "wires": [
+      {
+        "input": "ui",
+        "target": "CPRCoachUI ScriptComponent on CPRCoachUI root"
+      },
+      {
+        "input": "uiRoot",
+        "target": "SceneObject CPRCoachUI"
+      },
+      {
+        "input": "guide",
+        "target": "SceneObject HandsGuide"
+      },
+      {
+        "input": "guideVisual",
+        "target": "RenderMeshVisual on HandsGuide"
+      },
+      {
+        "input": "guideInteractable",
+        "target": "Interactable on HandsGuide"
+      },
+      {
+        "input": "heart",
+        "target": "SceneObject Heart"
+      },
+      {
+        "input": "manikin",
+        "target": "SceneObject Manikin"
+      },
+      {
+        "input": "camera",
+        "target": "Camera Object"
+      },
+      {
+        "input": "handsWhite",
+        "target": "Assets/Textures/hands_white.png"
+      },
+      {
+        "input": "handsGreen",
+        "target": "Assets/Textures/hands_green.png"
+      },
+      {
+        "input": "clickAudio",
+        "target": "AudioComponent on CPRCoach"
+      },
+      {
+        "input": "buttonAudio",
+        "target": "AudioComponent on CPRCoach/ButtonAudio"
+      },
+      {
+        "input": "holdAudio",
+        "target": "AudioComponent on CPRCoach/HoldAudio"
+      }
+    ],
+    "explicit_defaults": [],
+    "notes": "All numeric @input defaults are literals (bpm 110, pressDepth 4, handRadius 10, swapEvery 120, holdSeconds 1, followDistance 45, manikinDistance 60, chestWindowScale 1.5). instructionText/counterText are optional legacy fallbacks; leave them unwired. CPRCoach sets Manikin, HandsGuide, Heart and CPRCoachUI poses at runtime, so authored transforms are only starting values. Keep HandsGuide's authored 22x22 scale, because the script multiplies it."
+  }
+}

@@ -1,0 +1,78 @@
+- !<AssetImportMetadata/151dbded-b25e-4487-85c5-8405f3673436>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> e644146f-7fbd-4c02-ac42-16cfae7beded
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> e644146f-7fbd-4c02-ac42-16cfae7beded
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 24410c87-2508-4fcc-80b0-88b83addb2e3
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/24410c87-2508-4fcc-80b0-88b83addb2e3>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  RunInEditor: false
+  ComponentUid: 342829ed-e643-4e15-8ed9-2b45410a331a
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    accentColor: false
+    glassTint: false
+    iconCall: false
+    iconCheck: false
+    iconDone: false
+    iconHands: false
+    iconPush: false
+    stepTabBar: false
+    stepWindow: false
+    textColor: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - accentColor: !<Vec4> {x: 0.949000, y: 0.224000, z: 0.173000, w: 1.000000}
+      glassTint: !<Vec4> {x: 0.850000, y: 0.870000, z: 0.900000, w: 0.350000}
+      textColor: !<Vec4> {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      stepWindow: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      stepTabBar: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      iconCheck: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconCall: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconHands: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconPush: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconDone: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - '// @input vec4 accentColor = {0.949,0.224,0.173,1} {"widget":"color"}'
+    - '// @input vec4 glassTint = {0.12,0.13,0.15,0.75} {"widget":"color"}'
+    - '// @input vec4 textColor = {1,1,1,1} {"widget":"color"}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"References"}'
+    - // @input SceneObject stepWindow
+    - // @input SceneObject stepTabBar
+    - // @input Asset.Texture iconCheck
+    - // @input Asset.Texture iconCall
+    - // @input Asset.Texture iconHands
+    - // @input Asset.Texture iconPush
+    - // @input Asset.Texture iconDone
+    - '// @ui {"widget":"group_end"}'

@@ -1,0 +1,41 @@
+{
+  "step": "bootstrap-ui",
+  "status": "ok",
+  "errors": [],
+  "deviations": [
+    "ThemeManager: the only existing one sits under the disabled InteractionKitExamples root (never awakes), so a new root ThemeManager (_theme=System3, read back) was created and moved to root index 0 via scene.reparentSceneObject (ExecuteEditorCode). Root order now: ThemeManager, Camera Object, Lighting, InteractionKitExamples, InteractionKit, CPRCoach, AiPreviewAgent Handler, CPRCoachUI.",
+    "No project ImageMaterial created: CPRCoachUI.ts uses UIKit's IMAGE_MATERIAL_ASSET (Packages/UIKit.lspkg/Materials/Image.mat, present); it does not requireAsset a project Materials/ImageMaterial.mat.",
+    "Recompiled TS (succeeded) before the apply, so CPRCoachUI @inputs were wired in the same single apply: stepWindow->StepWindow, stepTabBar->StepTabBar, iconCheck/Call/Hands/Push/Done->warning/call/back_hand/monitor_heart/check_circle (all read back non-null). Settings inputs left at defaults.",
+    "Apply errors fixed outside VirtualScene (budget is 1 apply): blendMode=Normal set on both materials via asset-graphql setProperty ENUM (read back 'Normal'); HandsGuide collider defaulted to Sphere, so its shape was replaced with a Box (size 1x1x0.3 local = 22x22x6.6 cm under scale 22, fitVisual=false) via ExecuteEditorCode Editor.Shape.createBoxShape.",
+    "HandsGuide visual: RenderMeshVisual on HandsGuide itself using Packages/UIKit.lspkg/Meshes/Unit Plane.mesh (1x1 XY quad); HandsGuide transform rotation (-90,0,0) so the quad faces +Y, scale 22 -> 22x22 cm. CPRCoach caches/multiplies localScale and sets world position only, so this survives runtime. Interactable (InteractionKit) ScriptComponent added with default inputs.",
+    "Heart visual: Unit Plane quad, scale 10 (10x10 cm), identity rotation faces +Z toward user; CPRCoach's heartPose uses quat.lookAt toward the camera, which keeps +Z facing the user.",
+    "Materials: unlit, ENABLE_BASE_TEX on, baseTex bound (hands_white / heart), blendMode Normal, depthWrite false, twoSided true.",
+    "Project saved per this step's agent definition (model.project.save()); the spawn prompt said not to save. bootstrap-scripts still owns project_saved. CPRCoach.ts not attached; no placement verification."
+  ],
+  "retries": 0,
+  "applies_used": 1,
+  "created_roots": ["ThemeManager", "CPRCoachUI", "StepWindow", "StepTabBar"],
+  "created_root_ids": {
+    "ThemeManager": "3f9d170b-fdad-4e7d-85dc-0468870018ed",
+    "CPRCoachUI": "e230030b-3c12-4b15-a868-e5c87f66afab",
+    "StepWindow": "e5783372-7f3c-4795-befb-2e941e672a0b",
+    "StepTabBar": "6fa0cfe0-747f-40ff-b9e7-5aceaa821acd"
+  },
+  "apply_errors": [
+    "createAsset.setProperty passInfos.0.blendMode on HandsGuideMat/HeartMat: expects number, got string (fixed via asset-graphql ENUM)",
+    "modify._addComponents ColliderComponent shape.size on HandsGuide: default shape is Sphere (fixed: Box shape via ExecuteEditorCode)"
+  ],
+  "ui_components_attached": [
+    {"object": "CPRCoachUI", "script": "Assets/Scripts/CPRCoachUI.ts", "component_id": "0f01f0da-4fce-413f-bcb9-183baa5e2894"},
+    {"object": "ThemeManager", "script": "Packages/UIKit.lspkg/Scripts/Themes/ThemeManager.ts", "component_id": "0e42c825-a0a3-44a4-8267-b7f2b4558c39"},
+    {"object": "HandsGuide", "type": "RenderMeshVisual", "component_id": "7ef40c62-4002-40a8-9749-eb75e5055050"},
+    {"object": "HandsGuide", "type": "ColliderComponent", "component_id": "28f83f69-5bd3-4c6e-9942-72d8af693826"},
+    {"object": "HandsGuide", "script": "Packages/InteractionKit.lspkg/Components/Interaction/Interactable/Interactable.ts", "component_id": "cb048614-e52c-4ecd-bd22-cb9fe151ddc5"},
+    {"object": "Heart", "type": "RenderMeshVisual", "component_id": "1a45cde6-6fad-4d15-86da-0d11eea17fab"}
+  ],
+  "created_assets": [
+    {"path": "Assets/Materials/HandsGuideMat.mat", "id": "f4947f83-50fe-45b2-a6a1-3d99085a7f67"},
+    {"path": "Assets/Materials/HeartMat.mat", "id": "b58c352b-1635-4a37-98ad-53011e91706e"}
+  ],
+  "screenshot_paths": []
+}

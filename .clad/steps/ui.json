@@ -1,0 +1,44 @@
+{
+  "step": "ui",
+  "status": "ok",
+  "mode": "fix",
+  "fix": "ui-text-contrast: glassTint default darkened to (0.12,0.13,0.15,0.75) for StepWindow plate and StepTabBar capsule (both read this.glassTint); StepLabel alpha 0.6 -> 0.85; text stays white; inactive tab icons stay 45% white, now on dark backing; active tab (white fill + dark icon) and #F2392C Check accent unchanged.",
+  "errors": [],
+  "deviations": [
+    "glassTint is an @input: the scene CPRCoachUI component may still hold the serialized old value (0.85,0.87,0.9,0.35); the orchestrator must set it to (0.12,0.13,0.15,0.75) on the component or the code default has no effect.",
+    "StepLabel alpha is a code constant (not an @input) - no scene update needed.",
+    "Fix applied, compile verified; visual contrast still needs runtime capture confirmation by the orchestrator.",
+    "Helper version gate: references/UIKitHelpers.ts not copied (header 'LS 5.25' vs exact 5.25.0.26111423); composition is project-local in CPRCoachUI.ts."
+  ],
+  "retries": 0,
+  "changed_inputs": [
+    {"name": "glassTint", "component": "CPRCoachUI (Assets/Scripts/CPRCoachUI.ts)", "old": [0.85, 0.87, 0.9, 0.35], "new": [0.12, 0.13, 0.15, 0.75]}
+  ],
+  "modules": [
+    {
+      "path": "Assets/Scripts/CPRCoachUI.ts",
+      "class_name": "CPRCoachUI",
+      "public_methods": [
+        "setStepLabel(text: string): void",
+        "setInstruction(text: string): void",
+        "setCounter(text: string): void",
+        "setButton(label: string, visible: boolean, accent: boolean): void",
+        "setHoldProgress(value01: number, visible: boolean): void",
+        "setActiveTab(index: number): void",
+        "setVisible(visible: boolean): void"
+      ],
+      "events": ["onAction: PublicApi<void>"],
+      "inputs": {
+        "Settings": ["accentColor: vec4 (#F2392C)", "glassTint: vec4 (0.12,0.13,0.15,0.75)", "textColor: vec4 (white)"],
+        "References (all @allowUndefined)": ["stepWindow: SceneObject", "stepTabBar: SceneObject", "iconCheck: Texture", "iconCall: Texture", "iconHands: Texture", "iconPush: Texture", "iconDone: Texture"]
+      },
+      "required_scene_children": ["StepWindow", "StepTabBar"]
+    }
+  ],
+  "icons_used": ["Assets/Icons/warning.png", "Assets/Icons/call.png", "Assets/Icons/back_hand.png", "Assets/Icons/monitor_heart.png", "Assets/Icons/check_circle.png"],
+  "text_only_fallbacks": [],
+  "ui_packages": {
+    "UIKit": {"installed_version": "4.0.0", "contract": "references/uikit-4.0.md", "imports_verified": true},
+    "InteractionKit": {"installed_version": "4.0.0"}
+  }
+}

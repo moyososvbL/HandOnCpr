@@ -1,0 +1,51 @@
+{
+  "step": "mesh",
+  "status": "ok",
+  "errors": [],
+  "deviations": [
+    "Manikin authored as a code-generated static GLB (Node script building rounded primitives: sphere head + nose, short rounded-cylinder neck, flat-topped elliptical capsule torso, two capsule arms) instead of a runtime MeshBuilder script, because the mesh step must leave a GLB at Assets/GeneratedMeshes/Manikin.glb. It overwrites the proxy box placeholder.",
+    "No Blender on this machine and no live-capture verify: completeness is 'verified' by construction (deterministic code backend); facing is known by construction, not render-checked.",
+    "No scene instances of Manikin exist yet (fresh scene query at re-bind time); nothing to re-bind. A skeleton that places the Manikin prefab after this point gets the real mesh directly."
+  ],
+  "retries": 0,
+  "meshes": [
+    {
+      "name": "Manikin",
+      "path": "Assets/GeneratedMeshes/Manikin.glb",
+      "status": "ok",
+      "backend": "code",
+      "backend_reason": "signed_out; user chose basic shapes (plan backend code-authored) - deterministic primitive-built GLB",
+      "aabb_cm": [55.0, 24.0, 120.0],
+      "aabb_center_offset_cm": [0.0, 12.0, 0.0],
+      "aabb_min_cm": [-27.5, 0.0, -60.0],
+      "forward_axis": "-Z",
+      "upright": true,
+      "completeness": "verified",
+      "grounded": true,
+      "animation_available": false,
+      "normalized": true,
+      "size_warning": false,
+      "rest": "flat_on_surface",
+      "orientation": {
+        "lying": "face-up on its back, face/chest point +Y",
+        "head_toward": "-Z",
+        "feet_hips_toward": "+Z",
+        "patient_right_side": "-X",
+        "patient_left_side": "+X",
+        "note": "Origin is the centre of the footprint at floor level (min Y = 0). Nose bump at local (0, 24, -51) marks the face."
+      },
+      "chest_point_local_cm": [0.0, 21.0, -14.0],
+      "chest_point_note": "Lower half of the breastbone on the nipple line, on the flat chest top surface (y=21). Local offset from mesh origin in cm at the prefab's native import scale; place the hands guide at instanceWorldPos + rotate(chest_point_local_cm).",
+      "material": "ManikinGrey (embedded): baseColor 0.80/0.81/0.82, metallic 0, roughness 0.85",
+      "triangles": 9600
+    }
+  ],
+  "rebind": {
+    "performed": false,
+    "scope": "fresh scene query (no skeleton payload yet)",
+    "instances_found": 0,
+    "rebound": [],
+    "prefab_reimported": true,
+    "note": "Lens Studio re-imported Manikin (FileMesh + ObjectPrefab + ManikinGrey material present)."
+  }
+}
