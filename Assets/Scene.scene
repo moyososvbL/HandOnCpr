@@ -1295,22 +1295,29 @@
   Enabled: true
   ScriptAsset: !<reference> e644146f-7fbd-4c02-ac42-16cfae7beded
   ScriptInputsDefault:
-    accentColor: true
-    textColor: true
+    {}
   ScriptTypesDefault:
     {}
   ScriptInputs:
     "":
-      accentColor: !<Vec4> {x: 0.949000, y: 0.224000, z: 0.173000, w: 1.000000}
-      glassTint: !<Vec4> {x: 0.120000, y: 0.130000, z: 0.150000, w: 0.750000}
-      textColor: !<Vec4> {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
       stepWindow: !<reference.SceneObject> e5783372-7f3c-4795-befb-2e941e672a0b
       stepTabBar: !<reference.SceneObject> 6fa0cfe0-747f-40ff-b9e7-5aceaa821acd
-      iconCheck: !<reference.Texture> 9c1800c2-28c8-40fb-be9d-5f5a8695ac7a
-      iconCall: !<reference.Texture> a9a5b384-9138-48ae-bd18-3dcdc54e0576
-      iconHands: !<reference.Texture> 76eda761-f33f-4988-96ba-90376388349b
-      iconPush: !<reference.Texture> c0d220a3-4ca8-4544-8c82-969656017646
-      iconDone: !<reference.Texture> 1396359f-359f-46b0-bb2d-e885ff3dbb1a
+      iconAlert: !<reference.Texture> fccfabdc-2a1e-4128-b823-0e3c8d5b2b47
+      iconCall: !<reference.Texture> 0317a806-7ede-404b-837a-2e3a20bd4a30
+      iconHand: !<reference.Texture> d84087dd-b7ca-42a1-90ea-d1b240b12fc7
+      iconHeartbeat: !<reference.Texture> 5cec01d1-42d7-4e71-8e01-757f87f42d13
+      iconCheck: !<reference.Texture> fc50267e-f9b6-4414-a540-6b958d73fb86
+      iconVoice: !<reference.Texture> 1631bcb9-a03f-46a6-a839-4dd826acdd55
+      iconClose: !<reference.Texture> 182a85de-4bb3-4f55-8fa6-c3d4dbc57987
+      iconClock: !<reference.Texture> ba34f819-d6ad-4d5f-8fec-6a929188cb18
+      iconUp: !<reference.Texture> 1e260e56-b5cc-41f4-956d-6dd878ef764e
+      iconDown: !<reference.Texture> 1203d9eb-c958-4dd3-9570-96f038042429
+      heartTexture: !<reference.Texture> 3a7beb4a-6964-4741-bb64-504ace0d6266
+      uiFont: !<reference.Font> caff7ce6-e63d-412a-907c-f6010da43390
+      fontExtraLight: !<reference.Font> a1607b9b-3586-4d55-874e-2248c7bd6894
+      fontLight: !<reference.Font> 2005635d-2b2b-4fa0-ac44-76ed76f84902
+      fontMedium: !<reference.Font> 69f3b96f-26ca-4282-9ca5-2a3bbbc3a679
+      fontSemiBold: !<reference.Font> b0716715-94bd-4977-84ee-31c306d4d56f
   ScriptTypes:
     "":
       {}
@@ -15636,7 +15643,7 @@
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: -69.000000, z: -62.000000}
     Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 22.000000, y: 22.000000, z: 22.000000}
+    Scale: {x: 32.000000, y: 32.000000, z: 32.000000}
     HasSegmentScaleCompensation: false
   Children:
     []

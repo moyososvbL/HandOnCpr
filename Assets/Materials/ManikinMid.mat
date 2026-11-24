@@ -101,7 +101,7 @@
       value: 0
     baseColorFactor:
       typeIdx: 5
-      value: {x: 0.500000, y: 0.520000, z: 0.550000, w: 1.000000}
+      value: {x: 0.090000, y: 0.090000, z: 0.100000, w: 1.000000}
     emissiveFactor:
       typeIdx: 4
       value: {x: 0.000000, y: 0.000000, z: 0.000000}

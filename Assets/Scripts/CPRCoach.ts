@@ -3,12 +3,9 @@
 //
 // Owns: step state (Step enum), count / timers / swap reminder, the Hold sub-state of Place
 // (pinch-hold on the guide OR both palms on it), the beat, guide press animation + texture swap,
-// heart pulse, audio cues, manikin visibility, and the step window placement mode (head-follow
-// in Check/Call, chest-anchored from Watch on). Drives CPRCoachUI only through its public setters
-// and listens to ui.onAction -> next(). Pose math lives in CPRCoachPlacement.ts.
-// Must not: build UI, import UIKit, or move anything the UI module owns below its root.
-// Size note: ~300 lines because this is the user-mandated single coach file (extended, not split);
-// pure math was already moved out to CPRCoachPlacement.ts.
+// audio cues (Voice on/off), manikin placement/visibility, and where the UI frame goes
+// (head-follow in Check/Call, anchored on the hands guide from Watch on). Drives CPRCoachUI
+// only through its public setters and listens to its events. Pose math lives in CPRCoachPlacement.ts.
 //
 // Scene setup (done by the bootstrap step):
 //   CPRCoach root (top of hierarchy) carries this script + clickAudio; children ButtonAudio / HoldAudio.
@@ -16,7 +13,7 @@
 
 import { IK } from "InteractionKit.lspkg/IK";
 import { Interactable } from "InteractionKit.lspkg/Components/Interaction/Interactable/Interactable";
-import { CPRCoachUI } from "./CPRCoachUI";
+import { CPRCoachUI, Screen, HANDS_PX } from "./CPRCoachUI";
 import * as Placement from "./CPRCoachPlacement";
 
 enum Step { Check, Call, Watch, Place, Push, Done }
@@ -29,39 +26,28 @@ const CHEST_LOCAL = new vec3(0, 21, -9); // lower half of the breastbone (~13 cm
 const FLOOR_BELOW_EYE = 90;   // cm, kneeling eye height above the floor
 const GUIDE_LIFT = 0.5;       // cm above the chest surface
 const SWAP_SHOW_SECS = 3;
+const FRAME_IN_FRONT = 12;    // cm the UI frame floats in front of the chest, toward the eyes
 
 const TAB: Record<Step, number> = {
   [Step.Check]: 0, [Step.Call]: 1, [Step.Watch]: 2, [Step.Place]: 2, [Step.Push]: 3, [Step.Done]: 4,
 };
-const LINES: Record<Step, string> = {
-  [Step.Check]: "Not responding?\nNot breathing normally?",
-  [Step.Call]: "Call 112.\nPut the phone on speaker.",
-  [Step.Watch]: "Watch, then copy.\nLock your fingers. Push straight down.",
-  [Step.Place]: "Match your hands to the guide.\nArms straight. Shoulders over hands.",
-  [Step.Push]: "Push hard, push fast.",
-  [Step.Done]: "Help is here",
-};
-const BUTTONS: Record<Step, { label: string; visible: boolean; accent: boolean }> = {
-  [Step.Check]: { label: "Start CPR", visible: true, accent: true },
-  [Step.Call]: { label: "Called", visible: true, accent: false },
-  [Step.Watch]: { label: "I'm ready", visible: true, accent: false },
-  [Step.Place]: { label: "", visible: false, accent: false },
-  [Step.Push]: { label: "Help arrived", visible: true, accent: false },
-  [Step.Done]: { label: "Finish", visible: true, accent: false },
+const SCREEN: Record<Step, Screen> = {
+  [Step.Check]: "check", [Step.Call]: "call", [Step.Watch]: "watch",
+  [Step.Place]: "place", [Step.Push]: "push", [Step.Done]: "done",
 };
 
 @component
 export class CPRCoach extends BaseScriptComponent {
   @ui.group_start("References")
-  @input @allowUndefined instructionText: Text;   // legacy fallback; text now lives in CPRCoachUI
-  @input @allowUndefined counterText: Text;       // legacy fallback
+  @input @allowUndefined instructionText: Text;   // legacy, unused (text lives in CPRCoachUI)
+  @input @allowUndefined counterText: Text;       // legacy, unused
   @input guide: SceneObject;                      // glowing hands guide
   @input guideVisual: RenderMeshVisual;
   @input clickAudio: AudioComponent;
   @input camera: SceneObject;
   @input ui: CPRCoachUI;
   @input uiRoot: SceneObject;
-  @input heart: SceneObject;
+  @input heart: SceneObject;                      // legacy heart plane; the heart tile now lives in CPRCoachUI
   @input manikin: SceneObject;
   @input @allowUndefined guideInteractable: Interactable;
   @input handsWhite: Texture;
@@ -76,9 +62,9 @@ export class CPRCoach extends BaseScriptComponent {
   @input @widget(new SliderWidget(5, 20, 1)) handRadius: number = 10;        // cm, palms to guide
   @input @widget(new SliderWidget(5, 300, 5)) swapEvery: number = 120;       // seconds between swap reminders
   @input @widget(new SliderWidget(0.5, 3, 0.1)) holdSeconds: number = 1;
-  @input @widget(new SliderWidget(35, 70, 1)) followDistance: number = 45;   // cm, head-follow window
-  @input @widget(new SliderWidget(40, 90, 1)) manikinDistance: number = 60;  // cm, eyes to chest (flat)
-  @input @widget(new SliderWidget(1, 2, 0.05)) chestWindowScale: number = 1.5;
+  @input @widget(new SliderWidget(35, 70, 1)) followDistance: number = 45;   // cm, head-follow frame
+  @input @widget(new SliderWidget(40, 250, 1)) manikinDistance: number = 170; // cm, eyes to chest (flat)
+  @input @widget(new SliderWidget(1, 2, 0.05)) chestWindowScale: number = 1.5; // legacy, unused (frame scales with distance)
   @ui.group_end
 
   private started = false;
@@ -92,12 +78,13 @@ export class CPRCoach extends BaseScriptComponent {
   private pinching = false;
   private holding = false;
   private chestPos = vec3.zero();
-  private headDir = new vec3(0, 0, -1);
   private guideScale = vec3.one();
-  private heartScale = vec3.one();
   private uiScale = vec3.one();
   private following = true;
-  private lastCounter = "";
+  private voiceOn = true;
+  private lastCue = -1;
+  private lastCount = -1;
+  private bannerOn = false;
 
   onAwake() {
     const missing: string[] = [];
@@ -107,7 +94,6 @@ export class CPRCoach extends BaseScriptComponent {
     if (!this.camera) missing.push("camera");
     if (!this.ui) missing.push("ui");
     if (!this.uiRoot) missing.push("uiRoot");
-    if (!this.heart) missing.push("heart");
     if (!this.manikin) missing.push("manikin");
     if (missing.length > 0) print("[CPRCoach] ERROR: unwired @input(s): " + missing.join(", "));
 
@@ -121,16 +107,17 @@ export class CPRCoach extends BaseScriptComponent {
       this.guideScale = this.guide.getTransform().getLocalScale();
       this.guide.enabled = false;
     }
-    if (this.heart) {
-      this.heartScale = this.heart.getTransform().getLocalScale();
-      this.heart.enabled = false;
-    }
+    if (this.heart) this.heart.enabled = false;
     if (this.uiRoot) this.uiScale = this.uiRoot.getTransform().getLocalScale();
     if (this.guideVisual && this.guideVisual.mainMaterial) {
       this.guideVisual.mainMaterial = this.guideVisual.mainMaterial.clone();
     }
     this.placeManikin();
-    if (this.ui && this.ui.onAction) this.ui.onAction.add(() => this.next());
+    if (this.ui) {
+      this.ui.onAction.add(() => this.next());
+      this.ui.onVoice.add(() => this.toggleVoice());
+      this.ui.onEnd.add(() => this.end());
+    }
     if (this.guideInteractable) {
       this.guideInteractable.onTriggerStart.add(() => { this.pinching = true; });
       this.guideInteractable.onTriggerEnd.add(() => { this.pinching = false; });
@@ -141,19 +128,40 @@ export class CPRCoach extends BaseScriptComponent {
     this.snapFollow();
   }
 
-  // Called by the step button (ui.onAction) or any legacy pinch button.
+  // Called by the main pill button (ui.onAction).
   next() {
     if (!this.started || this.step === Step.Place) return;
-    if (this.buttonAudio) this.buttonAudio.play(1);
+    this.play(this.buttonAudio);
     if (this.step === Step.Done) { this.goTo(Step.Check); return; }
     this.goTo(this.step + 1);
+  }
+
+  /** Toolbar "End": stop the session and return to the first step. */
+  private end() {
+    if (!this.started) return;
+    this.play(this.buttonAudio);
+    this.goTo(Step.Check);
+  }
+
+  /** Toolbar "Voice on/off": mute or unmute every audio cue. */
+  private toggleVoice() {
+    this.voiceOn = !this.voiceOn;
+    this.ui.setVoice(this.voiceOn);
+  }
+
+  private play(a: AudioComponent | undefined) {
+    if (a && this.voiceOn) a.play(1);
   }
 
   private goTo(step: Step) {
     this.step = step;
     this.handsOnSince = -1;
     this.holding = false;
+    this.pinching = false;
     this.swapUntil = 0;
+    this.bannerOn = false;
+    this.lastCue = -1;
+    this.lastCount = -1;
 
     if (step === Step.Check || step === Step.Call) {
       if (step === Step.Check) this.setFollow(true);
@@ -174,43 +182,25 @@ export class CPRCoach extends BaseScriptComponent {
       this.setColor(GREEN);
     }
     if (step === Step.Done) { this.moveGuide(0); if (this.guide) this.guide.enabled = false; }
-    if (this.heart) {
-      this.heart.enabled = step === Step.Push;
-      this.heart.getTransform().setLocalScale(this.heartScale);
-    }
     this.show();
   }
 
   private show() {
     if (!this.started) return;
-    const b = BUTTONS[this.step];
-    this.ui.setStepLabel(`Step ${TAB[this.step] + 1} of 5`);
+    this.ui.setScreen(SCREEN[this.step]);
     this.ui.setActiveTab(TAB[this.step]);
-    this.ui.setButton(b.label, b.visible, b.accent);
-    this.ui.setHoldProgress(0, false);
-    let instruction = LINES[this.step];
-    let counter = "";
-    if (this.step === Step.Push) counter = "0";
+    if (this.step === Step.Push) {
+      this.ui.setCounter(0);
+      this.ui.setTick(0);
+      this.ui.setSwapBanner(false);
+      this.ui.setHeartPulse(1);
+    }
     if (this.step === Step.Done) {
       const secs = Math.floor(getTime() - this.pushStart);
       const mm = Math.floor(secs / 60);
       const ss = ("0" + (secs % 60)).slice(-2);
-      counter = `Time ${mm}:${ss} · ${this.count} compressions`;
+      this.ui.setStats(`${mm}:${ss}`, `${this.count}`);
     }
-    this.setInstruction(instruction);
-    this.setCounter(counter);
-  }
-
-  private setInstruction(text: string) {
-    this.ui.setInstruction(text);
-    if (this.instructionText) this.instructionText.text = text;
-  }
-
-  private setCounter(text: string) {
-    if (text === this.lastCounter) return;
-    this.lastCounter = text;
-    this.ui.setCounter(text);
-    if (this.counterText) this.counterText.text = text;
   }
 
   private isOnDevice(): boolean {
@@ -233,7 +223,6 @@ export class CPRCoach extends BaseScriptComponent {
     if (this.manikin && this.manikin.enabled && !this.isOnDevice()) {
       const mt = this.manikin.getTransform();
       this.chestPos = Placement.chestPoint(mt, CHEST_LOCAL).add(new vec3(0, GUIDE_LIFT, 0));
-      this.headDir = Placement.towardHead(mt);
     } else {
       // Centre of the chest: ~50 cm ahead and 35 cm below the eyes when kneeling beside the person.
       const cam = this.camera.getTransform();
@@ -241,41 +230,40 @@ export class CPRCoach extends BaseScriptComponent {
       this.chestPos = cam.getWorldPosition()
         .add(ahead.uniformScale(50))
         .add(vec3.down().uniformScale(35));
-      this.headDir = Placement.flatForward(cam);
     }
     this.guide.getTransform().setWorldPosition(this.chestPos);
     this.guide.getTransform().setLocalScale(this.guideScale);
     this.guide.enabled = true;
   }
 
-  // From Watch on: window beyond the guide toward the head, heart to the user's right.
+  // From Watch on: the Figma frame is anchored so its hands point sits on the guide.
   private anchorUi() {
-    this.setFollow(false);
-    const camPos = this.camera.getTransform().getWorldPosition();
-    const win = Placement.anchoredWindowPose(this.chestPos, this.headDir, camPos);
+    this.following = false;
+    const camT = this.camera.getTransform();
+    const dist = this.chestPos.distance(camT.getWorldPosition()) - FRAME_IN_FRONT;
+    const handsLocal = new vec3(
+      (HANDS_PX.x - 720) * Placement.FIGMA_K,
+      (405 - HANDS_PX.y) * Placement.FIGMA_K,
+      0,
+    );
+    const f = Placement.frameAtPoint(camT, this.chestPos, handsLocal, Math.max(30, dist));
     const ut = this.uiRoot.getTransform();
-    ut.setWorldPosition(win.position);
-    ut.setWorldRotation(win.rotation);
-    ut.setLocalScale(this.uiScale.uniformScale(this.chestWindowScale));
-    if (this.heart) {
-      const hp = Placement.heartPose(this.chestPos, Placement.rightOf(this.headDir), camPos);
-      const ht = this.heart.getTransform();
-      ht.setWorldPosition(hp.position);
-      ht.setWorldRotation(hp.rotation);
-    }
+    ut.setWorldPosition(f.pose.position);
+    ut.setWorldRotation(f.pose.rotation);
+    ut.setLocalScale(this.uiScale.uniformScale(f.scale));
   }
 
   private setFollow(on: boolean) {
     this.following = on;
     if (on && this.uiRoot) {
-      this.uiRoot.getTransform().setLocalScale(this.uiScale);
+      this.uiRoot.getTransform().setLocalScale(this.uiScale.uniformScale(this.followDistance / Placement.FRAME_REF));
       this.snapFollow();
     }
   }
 
   private snapFollow() {
     if (!this.uiRoot || !this.camera || !this.following) return;
-    const p = Placement.followTarget(this.camera.getTransform(), this.followDistance, 3);
+    const p = Placement.frameFollowTarget(this.camera.getTransform(), this.followDistance);
     const t = this.uiRoot.getTransform();
     t.setWorldPosition(p.position);
     t.setWorldRotation(p.rotation);
@@ -292,7 +280,7 @@ export class CPRCoach extends BaseScriptComponent {
   private followTick() {
     const t = this.uiRoot.getTransform();
     const cur = { position: t.getWorldPosition(), rotation: t.getWorldRotation() };
-    const p = Placement.followPose(this.camera.getTransform(), this.followDistance, cur, getDeltaTime());
+    const p = Placement.frameFollowPose(this.camera.getTransform(), this.followDistance, cur, getDeltaTime());
     t.setWorldPosition(p.position);
     t.setWorldRotation(p.rotation);
   }
@@ -302,7 +290,11 @@ export class CPRCoach extends BaseScriptComponent {
     const phase = (getTime() * this.bpm / 60) % 1;          // 0..1 each press
     const down = phase < 0.5 ? Math.sin(phase * 2 * Math.PI) : 0;
     this.moveGuide(down);
-    this.setCounter(down > 0.3 ? "Push down 5 cm" : "Let the chest rise");
+    const cue = down > 0.3 ? 1 : 0;
+    if (cue !== this.lastCue) {
+      this.lastCue = cue;
+      this.ui.setCue(cue === 1);
+    }
   }
 
   // Place / Hold: green while pinch-holding the guide OR both palms are on it; after holdSeconds, Push.
@@ -320,8 +312,7 @@ export class CPRCoach extends BaseScriptComponent {
         this.holding = false;
         this.handsOnSince = -1;
         this.setColor(WHITE);
-        this.setInstruction(LINES[Step.Place]);
-        this.ui.setHoldProgress(0, false);
+        this.ui.setScreen("place");
       }
       return;
     }
@@ -330,12 +321,12 @@ export class CPRCoach extends BaseScriptComponent {
       this.holding = true;
       this.handsOnSince = now;
       this.setColor(GREEN);
-      this.setInstruction("Hold still");
+      this.ui.setScreen("hold");
     }
     const p = Math.min(1, (now - this.handsOnSince) / this.holdSeconds);
-    this.ui.setHoldProgress(p, true);
+    this.ui.setHoldProgress(p);
     if (p >= 1) {
-      if (this.holdAudio) this.holdAudio.play(1);
+      this.play(this.holdAudio);
       this.pinching = false;
       this.goTo(Step.Push);
     }
@@ -350,22 +341,29 @@ export class CPRCoach extends BaseScriptComponent {
       this.lastBeat += interval;
       if (now - this.lastBeat >= interval) this.lastBeat = now; // resync after a stall
       this.count++;
-      this.clickAudio.play(1);
+      this.play(this.clickAudio);
     }
     const phase = Math.min(1, (now - this.lastBeat) / interval);
     this.moveGuide(phase < 0.5 ? Math.sin(phase * 2 * Math.PI) : 0);
 
-    if (this.heart) {
-      const ease = 1 - phase;
-      const s = 1 + 0.12 * ease * ease;
-      this.heart.getTransform().setLocalScale(this.heartScale.uniformScale(s));
+    const ease = 1 - phase;
+    this.ui.setHeartPulse(1 + 0.12 * ease * ease);
+
+    if (this.count !== this.lastCount) {
+      this.lastCount = this.count;
+      this.ui.setCounter(this.count);
+      this.ui.setTick(this.count);
     }
 
     if (now >= this.nextSwap) {
       this.swapUntil = now + SWAP_SHOW_SECS;
       this.nextSwap += this.swapEvery;
     }
-    this.setCounter(now < this.swapUntil ? "Swap with someone if you can" : `${this.count}`);
+    const banner = now < this.swapUntil;
+    if (banner !== this.bannerOn) {
+      this.bannerOn = banner;
+      this.ui.setSwapBanner(banner);
+    }
   }
 
   // down: 0 = resting, 1 = fully pressed.

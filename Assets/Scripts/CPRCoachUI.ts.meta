@@ -29,16 +29,24 @@
   ExportUid: 00000000-0000-0000-0000-000000000000
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
-    accentColor: false
-    glassTint: false
+    fontExtraLight: false
+    fontLight: false
+    fontMedium: false
+    fontSemiBold: false
+    heartTexture: false
+    iconAlert: false
     iconCall: false
     iconCheck: false
-    iconDone: false
-    iconHands: false
-    iconPush: false
+    iconClock: false
+    iconClose: false
+    iconDown: false
+    iconHand: false
+    iconHeartbeat: false
+    iconUp: false
+    iconVoice: false
     stepTabBar: false
     stepWindow: false
-    textColor: false
+    uiFont: false
   ScriptTypesHidden:
     {}
   ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
@@ -48,31 +56,47 @@
   Attachments:
     []
   DefaultScriptInputs:
-    - accentColor: !<Vec4> {x: 0.949000, y: 0.224000, z: 0.173000, w: 1.000000}
-      glassTint: !<Vec4> {x: 0.850000, y: 0.870000, z: 0.900000, w: 0.350000}
-      textColor: !<Vec4> {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
-      stepWindow: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+    - stepWindow: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       stepTabBar: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
-      iconCheck: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconAlert: !<reference.Texture> 00000000-0000-0000-0000-000000000000
       iconCall: !<reference.Texture> 00000000-0000-0000-0000-000000000000
-      iconHands: !<reference.Texture> 00000000-0000-0000-0000-000000000000
-      iconPush: !<reference.Texture> 00000000-0000-0000-0000-000000000000
-      iconDone: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconHand: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconHeartbeat: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconCheck: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconVoice: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconClose: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconClock: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconUp: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconDown: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      heartTexture: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      uiFont: !<reference.Font> 00000000-0000-0000-0000-000000000000
+      fontExtraLight: !<reference.Font> 00000000-0000-0000-0000-000000000000
+      fontLight: !<reference.Font> 00000000-0000-0000-0000-000000000000
+      fontMedium: !<reference.Font> 00000000-0000-0000-0000-000000000000
+      fontSemiBold: !<reference.Font> 00000000-0000-0000-0000-000000000000
   ScriptTypes:
     -
       {}
   InputLines:
-    - '// @ui {"widget":"group_start", "label":"Settings"}'
-    - '// @input vec4 accentColor = {0.949,0.224,0.173,1} {"widget":"color"}'
-    - '// @input vec4 glassTint = {0.12,0.13,0.15,0.75} {"widget":"color"}'
-    - '// @input vec4 textColor = {1,1,1,1} {"widget":"color"}'
-    - '// @ui {"widget":"group_end"}'
     - '// @ui {"widget":"group_start", "label":"References"}'
     - // @input SceneObject stepWindow
     - // @input SceneObject stepTabBar
-    - // @input Asset.Texture iconCheck
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Icons (Assets/Icons) and heart"}'
+    - // @input Asset.Texture iconAlert
     - // @input Asset.Texture iconCall
-    - // @input Asset.Texture iconHands
-    - // @input Asset.Texture iconPush
-    - // @input Asset.Texture iconDone
+    - // @input Asset.Texture iconHand
+    - // @input Asset.Texture iconHeartbeat
+    - // @input Asset.Texture iconCheck
+    - // @input Asset.Texture iconVoice
+    - // @input Asset.Texture iconClose
+    - // @input Asset.Texture iconClock
+    - // @input Asset.Texture iconUp
+    - // @input Asset.Texture iconDown
+    - // @input Asset.Texture heartTexture
+    - // @input Asset.Font uiFont
+    - // @input Asset.Font fontExtraLight
+    - // @input Asset.Font fontLight
+    - // @input Asset.Font fontMedium
+    - // @input Asset.Font fontSemiBold
     - '// @ui {"widget":"group_end"}'

@@ -81,6 +81,51 @@ export function heartPose(chestPos: vec3, right: vec3, camPos: vec3, rightCm: nu
   return { position, rotation };
 }
 
+// ─── Figma frame mapping ──────────────────────────────────────────────────
+// The UI is authored on a plane in "Figma frame" coordinates: 1 Figma px = FIGMA_K cm at
+// FRAME_REF cm from the eye (the 1440 px frame spans the ~32° SPECS view). Scaling the plane
+// by distance / FRAME_REF keeps every element at the same angular size as in the PNGs.
+export const FIGMA_K = 0.0178;
+export const FRAME_REF = 45;
+
+/** Camera look direction (camera looks down local -Z). */
+export function lookDir(camT: Transform): vec3 {
+  return camT.forward.uniformScale(-1).normalize();
+}
+
+/** Follow mode: frame centre on the view direction `distance` ahead, facing the camera. */
+export function frameFollowTarget(camT: Transform, distance: number): Pose {
+  const cam = camT.getWorldPosition();
+  const look = lookDir(camT);
+  const position = cam.add(look.uniformScale(distance));
+  return { position, rotation: quat.lookAt(look.uniformScale(-1), vec3.up()) };
+}
+
+/** Lazy follow toward frameFollowTarget at `rate` per second. */
+export function frameFollowPose(camT: Transform, distance: number, current: Pose, dt: number, rate: number = 4): Pose {
+  const target = frameFollowTarget(camT, distance);
+  const k = 1 - Math.exp(-rate * Math.max(0, dt));
+  return {
+    position: vec3.lerp(current.position, target.position, k),
+    rotation: quat.slerp(current.rotation, target.rotation, k),
+  };
+}
+
+/**
+ * Chest mode: a frame plane `distance` cm from the eye along the ray to `point`, facing the
+ * camera, positioned so the frame-local point `frameLocal` (cm at FRAME_REF) lands on `point`'s
+ * line of sight. Returns the pose and the uniform scale to apply (distance / FRAME_REF).
+ */
+export function frameAtPoint(camT: Transform, point: vec3, frameLocal: vec3, distance: number): { pose: Pose; scale: number } {
+  const cam = camT.getWorldPosition();
+  const dir = point.sub(cam).normalize();
+  const rotation = quat.lookAt(dir.uniformScale(-1), vec3.up());
+  const scale = distance / FRAME_REF;
+  const anchor = cam.add(dir.uniformScale(distance));
+  const position = anchor.sub(rotation.multiplyVec3(frameLocal.uniformScale(scale)));
+  return { pose: { position, rotation }, scale };
+}
+
 /** User's right on the floor plane given a flat forward. */
 export function rightOf(fwd: vec3): vec3 {
   return fwd.cross(vec3.up()).normalize();

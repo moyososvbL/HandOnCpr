@@ -1,6 +1,9 @@
 // LEAF test helpers for HandsOn CPR. Read-only access to Lens state; drives it only through
 // the real interactables (ActionButton, HandsGuide) and, for the swap test, a runtime-only
 // tweak of CPRCoach.swapEvery (never written to the scene).
+//
+// UI (CPRCoachUI) object names repeat ("Label" in every pill, "Text" in every chip, "Heart" in
+// several tiles), so lookups are scoped by parent name.
 import {expect} from "Leaf.lspkg/Utils/common/Expect"
 import {
   findSceneObject,
@@ -12,6 +15,7 @@ import {
 } from "Leaf.lspkg/Utils/common/Utils"
 import {findInteractableByName} from "Leaf.lspkg/Interactors/InteractableUtils"
 import {Interactable} from "InteractionKit.lspkg/Components/Interaction/Interactable/Interactable"
+import {RoundedRectangle} from "UIKit.lspkg/Scripts/Visuals/RoundedRectangle/RoundedRectangle"
 import {CPRCoach} from "../Scripts/CPRCoach"
 import {CPRCoachUI} from "../Scripts/CPRCoachUI"
 import {CPRHandInteractor} from "./CPRHandInteractor"
@@ -29,6 +33,7 @@ export function coach(): CPRCoach {
 
 export function coachUI(): CPRCoachUI {
   const so = findSceneObjectByName("CPRCoachUI")
+  if (!so) throw new Error("CPRCoachUI scene object not found")
   const c = so.getComponent(CPRCoachUI.getTypeName()) as CPRCoachUI
   if (!c) throw new Error("CPRCoachUI script not found")
   return c
@@ -43,23 +48,56 @@ export function step(): number {
   return state().step as number
 }
 
-export function text(name: string): string {
+/** Scene object `name` whose direct parent is `parent`. */
+export function child(parent: string, name: string): SceneObject {
+  const so = findSceneObject((o) => matchSceneObjectName(name)(o) && matchSceneObjectParentName(parent)(o))
+  if (!so) throw new Error(`"${parent}/${name}" not found`)
+  return so
+}
+
+export function obj(name: string): SceneObject {
   const so = findSceneObjectByName(name)
-  if (!so) throw new Error(`Text object "${name}" not found`)
-  return (so.getComponent("Component.Text") as Text).text
+  if (!so) throw new Error(`"${name}" not found`)
+  return so
+}
+
+function textOf(so: SceneObject): string {
+  const t = so.getComponent("Component.Text") as Text
+  if (!t) throw new Error(`"${so.name}" has no Text`)
+  return t.text
+}
+
+/** Window text under StepWindow/Content: StepLabel, Instruction, SubText, Counter, CounterCaption. */
+export function text(name: string): string {
+  return textOf(child("Content", name))
+}
+
+export function textIn(parent: string, name: string): string {
+  return textOf(child(parent, name))
+}
+
+/** Is the window text object itself enabled (e.g. StepLabel hidden on Done)? */
+export function textShown(name: string): boolean {
+  return child("Content", name).enabled
 }
 
 export function buttonLabel(): string {
-  return (coachUI() as any).buttonLabel as string
+  return textIn("ActionButton", "Label")
+}
+
+export function sideTag(): string {
+  return textIn("SideTag", "Text")
+}
+
+export function holdFillWidth(): number {
+  const rr = child("HoldProgress", "Fill").getComponent(RoundedRectangle.getTypeName()) as RoundedRectangle
+  return rr.size.x
 }
 
 export function activeTabs(): number[] {
   const out: number[] = []
   for (let i = 0; i < 5; i++) {
-    const fill = findSceneObject(
-      (so) => matchSceneObjectName("ActiveFill")(so) && matchSceneObjectParentName("Tab" + i)(so),
-    )
-    if (!fill) throw new Error(`Tab${i}/ActiveFill not found`)
+    const fill = child("Tab" + i, "ActiveFill")
     if (fill.enabled) out.push(i)
   }
   return out
@@ -84,17 +122,17 @@ export function guideInteractable(): Interactable {
   return b
 }
 
-/** Wait for the Lens to finish onStart and UIKit to build the button. */
+/** Wait for the Lens to finish onStart and the UI to build. */
 export async function waitReady(): Promise<void> {
   await sleep(1500)
   for (let i = 0; i < 120 && !(coach() as any).started; i++) await nextFrame()
   expect((coach() as any).started).toBe(true)
 }
 
-/** Pinch the step button, which must currently read `label`, and expect `toStep` afterwards. */
+/** Pinch the action pill, which must currently read `label`, and expect `toStep` afterwards. */
 export async function pressStepButton(hand: CPRHandInteractor, label: string, toStep: number): Promise<void> {
   expect(buttonLabel()).toBe(label)
-  expect(findSceneObjectByName("ActionButton").enabled).toBe(true)
+  expect(obj("ActionButton").enabled).toBe(true)
   const before = step()
   await hand.pinch(actionButton())
   print(`[CPRTest] pinched "${label}": step ${before} -> ${step()}`)
@@ -115,6 +153,15 @@ export async function goToPush(hand: CPRHandInteractor): Promise<void> {
   await hand.pinchHold(guideInteractable(), 1300)
   await sleep(200)
   expect(step()).toBe(STEP.Push)
+}
+
+export async function waitFor(cond: () => boolean, timeoutSecs: number): Promise<boolean> {
+  const t0 = getTime()
+  while (!cond()) {
+    if (getTime() - t0 > timeoutSecs) return false
+    await nextFrame()
+  }
+  return true
 }
 
 export function isNumber(s: string): boolean {

@@ -112,6 +112,6 @@
     - '// @input float swapEvery = 120 {"widget":"slider", "min":5, "max":300, "step":5}'
     - '// @input float holdSeconds = 1 {"widget":"slider", "min":0.5, "max":3, "step":0.1}'
     - '// @input float followDistance = 45 {"widget":"slider", "min":35, "max":70, "step":1}'
-    - '// @input float manikinDistance = 60 {"widget":"slider", "min":40, "max":90, "step":1}'
+    - '// @input float manikinDistance = 170 {"widget":"slider", "min":40, "max":250, "step":1}'
     - '// @input float chestWindowScale = 1.5 {"widget":"slider", "min":1, "max":2, "step":0.05}'
     - '// @ui {"widget":"group_end"}'

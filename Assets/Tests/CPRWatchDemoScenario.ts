@@ -1,10 +1,10 @@
 // Criterion 2: on Watch first the manikin is on the floor, the HandsGuide is enabled on its chest
-// (torso, not near the hip end) and the counter cue alternates between the two demo lines.
+// (torso, not near the hip end) and the SideTag cue alternates between the two demo lines.
 import {Scenario} from "Leaf.lspkg/Scenarios/scenario/Scenario"
 import {expect} from "Leaf.lspkg/Utils/common/Expect"
 import {findSceneObject, matchSceneObjectName, matchSceneObjectParentName, nextFrame} from "Leaf.lspkg/Utils/common/Utils"
 import {CPRHandInteractor} from "./CPRHandInteractor"
-import {coach, goToWatch, state, text, waitReady} from "./CPRTestUtils"
+import {coach, goToWatch, obj, sideTag, state, waitReady} from "./CPRTestUtils"
 
 const CHEST_LOCAL = new vec3(0, 21, -9) // CPRCoach.ts chest point (Manikin local cm)
 const FLOOR_BELOW_EYE = 90
@@ -61,19 +61,20 @@ export class CPRWatchDemoScenario extends Scenario {
     expect(across > 0.3 && across < 0.7).toBe(true)
     expect(along > 0.1 && along < 0.5).toBe(true)
 
-    // Counter cue alternates for ~2.5 s (about 4.5 presses at 110/min).
+    // Side tag cue alternates for ~2.5 s (about 4.5 presses at 110/min).
+    expect(obj("SideTag").enabled).toBe(true)
     const seen: {[k: string]: number} = {}
     let switches = 0
-    let last = text("Counter")
+    let last = sideTag()
     const t0 = getTime()
     while (getTime() - t0 < 2.5) {
       await nextFrame()
-      const cur = text("Counter")
+      const cur = sideTag()
       seen[cur] = (seen[cur] ?? 0) + 1
       if (cur !== last) switches++
       last = cur
     }
-    print(`[CPRTest] counter values seen: ${JSON.stringify(seen)} switches=${switches}`)
+    print(`[CPRTest] side tag values seen: ${JSON.stringify(seen)} switches=${switches}`)
     expect(Object.keys(seen).length).toBe(2)
     expect((seen[PUSH] ?? 0) > 0).toBe(true)
     expect((seen[RISE] ?? 0) > 0).toBe(true)
